@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.19/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.19",
+  "version": "1.0.0",
+  "id": "{{BOT_ID}}",
+  "developer": {
+    "name": "Hindsight",
+    "websiteUrl": "https://example.com",
+    "privacyUrl": "https://example.com/privacy",
+    "termsOfUseUrl": "https://example.com/terms"
+  },
+  "name": {
+    "short": "Hindsight",
+    "full": "Hindsight — the AI teammate that never forgets a decision"
+  },
+  "description": {
+    "short": "Auto-remembers your team's decisions; ask it anything.",
+    "full": "Hindsight ingests your channel messages into a Cognee decision graph and answers what you decided, why, who owns it, and what changed — right in Teams."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#0a0f1e",
+  "bots": [
+    {
+      "botId": "{{BOT_ID}}",
+      "scopes": ["team", "groupChat"],
+      "isNotificationOnly": false,
+      "supportsFiles": false,
+      "supportsCalling": false,
+      "supportsVideo": false
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": ["{{APP_DOMAIN}}"],
+  "webApplicationInfo": {
+    "id": "{{BOT_ID}}",
+    "resource": "api://{{APP_DOMAIN}}/{{BOT_ID}}"
+  },
+  "authorization": {
+    "permissions": {
+      "resourceSpecific": [
+        {
+          "name": "ChannelMessage.Read.Group",
+          "type": "Application"
+        }
+      ]
+    }
+  }
+}

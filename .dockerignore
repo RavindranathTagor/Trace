@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.github
+npm-debug.log*
+*.tsbuildinfo
+# never bake secrets or runtime state into the image
+.env
+.env*.local
+data/integrations.json
+data/forgotten.json
+adapters/node_modules
+adapters/.env
+coverage

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="256" height="256" role="img" aria-label="Trace logo">
+  <defs>
+    <linearGradient id="t-tile" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#eef0ff"/>
+      <stop offset="1" stop-color="#f4effe"/>
+    </linearGradient>
+    <linearGradient id="t-thread" x1="2" y1="18" x2="22" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect x="0.6" y="0.6" width="22.8" height="22.8" rx="6" fill="url(#t-tile)" stroke="#4f46e5" stroke-opacity="0.22" stroke-width="0.5"/>
+  <circle cx="12" cy="7.4" r="5" fill="#f2b04a" opacity="0.18"/>
+  <path d="M3.2 17.2 C7 17.2 8.3 7.4 12 7.4 S16.9 14.6 20.8 11.2" fill="none" stroke="url(#t-thread)" stroke-width="1.9" stroke-linecap="round"/>
+  <circle cx="3.2" cy="17.2" r="1.9" fill="#4f46e5"/>
+  <circle cx="20.8" cy="11.2" r="1.9" fill="#8b5cf6" opacity="0.85"/>
+  <circle cx="12" cy="7.4" r="2.8" fill="#f2b04a"/>
+  <circle cx="12" cy="7.4" r="2.8" fill="none" stroke="#ffffff" stroke-width="0.9"/>
+</svg>

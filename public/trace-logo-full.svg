@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 40" width="576" height="120" role="img" aria-label="Trace">
+  <defs>
+    <linearGradient id="tf-tile" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#eef0ff"/>
+      <stop offset="1" stop-color="#f4effe"/>
+    </linearGradient>
+    <linearGradient id="tf-thread" x1="6" y1="30" x2="34" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <!-- icon tile -->
+  <rect x="4" y="4" width="32" height="32" rx="9" fill="url(#tf-tile)" stroke="#4f46e5" stroke-opacity="0.22"/>
+  <circle cx="20" cy="14.9" r="6.7" fill="#f2b04a" opacity="0.18"/>
+  <path d="M9.3 27.6 C14.3 27.6 16.1 14.9 20 14.9 S26.5 24.5 31.7 20" fill="none" stroke="url(#tf-thread)" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="9.3" cy="27.6" r="2.5" fill="#4f46e5"/>
+  <circle cx="31.7" cy="20" r="2.5" fill="#8b5cf6" opacity="0.85"/>
+  <circle cx="20" cy="14.9" r="3.7" fill="#f2b04a"/>
+  <circle cx="20" cy="14.9" r="3.7" fill="none" stroke="#ffffff" stroke-width="1.2"/>
+  <!-- wordmark -->
+  <text x="46" y="21" font-family="Geist, Inter, -apple-system, Segoe UI, Roboto, sans-serif" font-size="18" font-weight="600" letter-spacing="-0.3" fill="#23262f">Trace</text>
+  <text x="46" y="31.5" font-family="Geist, Inter, -apple-system, Segoe UI, Roboto, sans-serif" font-size="7.5" fill="#8a8f9c">catch what your team forgot it decided</text>
+</svg>

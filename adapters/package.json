@@ -1,0 +1,17 @@
+{
+  "name": "hindsight-adapters",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chat-platform adapters that auto-ingest messages into Hindsight's Cognee memory.",
+  "scripts": {
+    "discord": "node --env-file=.env discord-bot.mjs",
+    "backfill": "node --env-file=.env discord-backfill.mjs",
+    "teams": "node --env-file=.env teams/teams-bot.mjs"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "botbuilder": "^4.23.1",
+    "restify": "^11.1.0"
+  }
+}
