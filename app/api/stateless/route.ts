@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { config, isBaselineEnabled } from "@/lib/config";
-import { getModel } from "@/lib/modelStore";
+import { chatComplete, llmAvailable } from "@/lib/llm";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,46 +11,33 @@ export async function POST(req: NextRequest) {
   const { query } = (await req.json().catch(() => ({}))) as { query?: string };
   if (!query?.trim()) return NextResponse.json({ error: "query is required" }, { status: 400 });
 
-  if (!isBaselineEnabled()) {
+  if (!llmAvailable()) {
     return NextResponse.json({
       answer:
-        "I don't have any memory of your team's meetings or decisions, so I can't answer that. (This is a plain LLM with no memory — set GROQ_API_KEY to make the baseline live.)",
+        "I don't have any memory of your team's meetings or decisions, so I can't answer that. (This is a plain LLM with no memory — set GROQ_API_KEY / GOOGLE_API_KEY, or run Ollama, to make the baseline live.)",
       source: "stateless-canned",
     });
   }
 
-  try {
-    const res = await fetch(`${config.baseline.baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${config.baseline.apiKey}`,
+  // Runs through the failover chain (Groq → Google → Ollama) so a rate limit
+  // never breaks the baseline demo.
+  const answer = await chatComplete(
+    [
+      {
+        role: "system",
+        content:
+          "You are a generic assistant with NO access to the user's team, meetings, or decisions. You have no memory of prior context. If asked about specific team decisions, owners, dates, or what changed, you must honestly say you don't have that information. Reply with only the final answer (no reasoning).",
       },
-      body: JSON.stringify({
-        model: getModel(),
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a generic assistant with NO access to the user's team, meetings, or decisions. You have no memory of prior context. If asked about specific team decisions, owners, dates, or what changed, you must honestly say you don't have that information. Reply with only the final answer (no reasoning).",
-          },
-          { role: "user", content: query },
-        ],
-        temperature: 0.2,
-        max_tokens: 512,
-      }),
-    });
-    if (!res.ok) throw new Error(`Groq ${res.status}`);
-    const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-    const raw = data.choices?.[0]?.message?.content ?? "";
-    const answer = raw.replace(/<think>[\s\S]*?<\/think>/gi, "").trim() || "I don't have that context.";
-    return NextResponse.json({ answer, source: "stateless" });
-  } catch (err) {
-    console.error("[stateless] Groq error:", err);
+      { role: "user", content: query },
+    ],
+    { temperature: 0.2, maxTokens: 512 },
+  );
+
+  if (!answer) {
     return NextResponse.json({
-      answer:
-        "I don't have any memory of your team's decisions, so I can't answer that question.",
+      answer: "I don't have any memory of your team's decisions, so I can't answer that question.",
       source: "stateless-fallback",
     });
   }
+  return NextResponse.json({ answer, source: "stateless" });
 }

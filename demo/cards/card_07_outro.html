@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset='utf-8'><style>
+@font-face { font-family:'Geist'; src:url('file:///D:/Hangover/hindsight/app/fonts/GeistVF.woff'); font-weight:100 900; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { width:1920px; height:1080px; }
+body {
+  font-family:'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background:#FAFAFB; color:#23262F; letter-spacing:-0.01em;
+  -webkit-font-smoothing:antialiased;
+  display:flex; align-items:center; justify-content:center;
+}
+.stage { width:1520px; }
+.logo { display:flex; align-items:center; gap:18px; margin-bottom:56px; }
+.logo .wm { font-size:34px; font-weight:600; letter-spacing:-0.02em; }
+.kicker { font-size:19px; font-weight:600; text-transform:uppercase; letter-spacing:0.22em; color:#9297A0; margin-bottom:26px; }
+h1 { font-size:96px; font-weight:600; line-height:1.02; letter-spacing:-0.03em; }
+h1 .amber { color:#E0A54A; }
+h1 .indigo { color:#4F46E5; }
+.sub { font-size:34px; line-height:1.4; color:#6B6F78; margin-top:34px; max-width:1180px; }
+.row { display:flex; gap:16px; margin-top:52px; flex-wrap:wrap; }
+.chip { font-size:24px; font-weight:500; color:#23262F; background:#fff; border:1px solid rgba(0,0,0,.08);
+        border-radius:999px; padding:14px 26px; box-shadow:0 1px 2px rgba(0,0,0,.05); }
+.chip.accent { color:#3B34B8; background:rgba(79,70,229,.10); border-color:rgba(79,70,229,.25); }
+.foot { position:fixed; left:200px; bottom:96px; font-size:22px; color:#9297A0; }
+.badge { font-size:22px; font-weight:600; padding:8px 16px; border-radius:10px; display:inline-flex; align-items:center; gap:10px; }
+.dot { width:11px; height:11px; border-radius:50%; display:inline-block; }
+.lifecycle { display:flex; gap:22px; margin-top:56px; }
+.life { flex:1; background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:20px; padding:32px 30px; box-shadow:0 1px 2px rgba(0,0,0,.05); }
+.life .op { font-family:'Geist'; font-size:30px; font-weight:600; color:#4F46E5; }
+.life .d { font-size:21px; color:#6B6F78; margin-top:12px; line-height:1.4; }
+</style></head><body>
+<div class="stage" style="text-align:center">
+  <div style="display:flex;justify-content:center">
+<svg viewBox="0 0 132 48" width="132" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="66" cy="15" r="15" fill="#F2B04A" opacity="0.16"/>
+  <path d="M8 36 C 30 36, 40 16, 66 15 S 100 30, 124 17" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="8" cy="36" r="4.2" fill="#4F46E5" opacity="0.82"/>
+  <circle cx="124" cy="17" r="4.2" fill="#4F46E5"/>
+  <circle cx="66" cy="15" r="7.5" fill="#F2B04A"/>
+  <circle cx="66" cy="15" r="7.5" stroke="#ffffff" stroke-width="2"/>
+</svg>
+</div>
+  <h1 style="margin-top:44px;font-size:104px">No more <span class="amber">hangover.</span></h1>
+  <div class="sub" style="margin:40px auto 0;font-size:36px">Give your agents a memory that survives the night.</div>
+  <div class="row" style="justify-content:center;margin-top:54px">
+    <span class="badge" style="background:rgba(79,70,229,.10);color:#3B34B8"><span class="dot" style="background:#4F46E5"></span>Runs on Cognee Cloud</span>
+    <span class="badge" style="background:rgba(224,165,74,.14);color:#8a5a12"><span class="dot" style="background:#E0A54A"></span>100% self-hostable</span>
+  </div>
+  <div class="foot" style="left:0;right:0;text-align:center;bottom:70px">Trace · built on the open-source Cognee memory layer</div>
+</div>
+</body></html>

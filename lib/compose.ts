@@ -4,9 +4,8 @@
 // only as a DEEP FALLBACK for when Cognee's completion is unavailable/empty (it can
 // stall when its LLM is rate-limited), composing over the context we already pulled.
 
-import { config, isBaselineEnabled } from "@/lib/config";
-import { getModel } from "@/lib/modelStore";
 import { completeWithCognee } from "@/lib/cognee";
+import { chatComplete, llmAvailable } from "@/lib/llm";
 
 const MAX_CONTEXT_CHARS = 3200; // ~800 tokens: fits chunks + graph, well under the fallback TPM budget
 
@@ -47,50 +46,19 @@ export async function composeAnswer(question: string, context: string): Promise<
     console.error("[compose] Cognee LLM unavailable, falling back:", err instanceof Error ? err.message : err);
   }
 
-  // 2) FALLBACK — compose over the context we already retrieved.
+  // 2) FALLBACK — compose over the context we already retrieved, via the LLM
+  //    failover chain (Groq → Google → Ollama). If none are configured, return the
+  //    cleaned raw context so the user still gets an answer.
   const ctx = (context || "").trim().slice(0, MAX_CONTEXT_CHARS);
   if (!ctx) return "I don't have anything about that in the team's memory yet.";
-  if (!isBaselineEnabled()) return cleanContext(ctx);
+  if (!llmAvailable()) return cleanContext(ctx);
 
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const res = await fetch(`${config.baseline.baseUrl}/chat/completions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${config.baseline.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: getModel(),
-          messages: [
-            { role: "system", content: ANSWER_PROMPT },
-            { role: "user", content: `Team memory context:\n${ctx}\n\nQuestion: ${question}` },
-          ],
-          temperature: 0.2,
-          max_tokens: 400,
-        }),
-        signal: AbortSignal.timeout(15000),
-      });
-
-      // Rate-limited? wait out the window once, then retry.
-      if (res.status === 429 && attempt === 1) {
-        await new Promise((r) => setTimeout(r, 4000));
-        continue;
-      }
-      if (!res.ok) throw new Error(`compose ${res.status}`);
-
-      const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-      const raw = data.choices?.[0]?.message?.content ?? "";
-      const answer = raw.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
-      return answer || cleanContext(ctx);
-    } catch (err) {
-      if (attempt === 1) {
-        await new Promise((r) => setTimeout(r, 2000));
-        continue;
-      }
-      console.error("[compose] fallback failed, returning context:", err instanceof Error ? err.message : err);
-      return cleanContext(ctx);
-    }
-  }
-  return cleanContext(ctx);
+  const answer = await chatComplete(
+    [
+      { role: "system", content: ANSWER_PROMPT },
+      { role: "user", content: `Team memory context:\n${ctx}\n\nQuestion: ${question}` },
+    ],
+    { temperature: 0.2, maxTokens: 400 },
+  );
+  return answer || cleanContext(ctx);
 }

@@ -28,10 +28,24 @@ interface PulseScan {
   degraded?: string;
 }
 
-const TYPE_META: Record<PulseCardType, { label: string; accent: string; glyph: string }> = {
-  drift: { label: "Decision drift", accent: "var(--drift)", glyph: "⟳" },
-  duplicate: { label: "Duplicate work", accent: "var(--duplicate)", glyph: "⧉" },
-  ownership: { label: "Ownership risk", accent: "var(--ownership)", glyph: "◑" },
+const G = ({ children, className = "h-3.5 w-3.5" }: { children: React.ReactNode; className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>{children}</svg>
+);
+const IconDriftG = () => (<G><path d="M4 7h11a4 4 0 0 1 0 8H9" /><path d="m7 12-3 3 3 3" /><path d="M20 7l-3-3M20 7l-3 3" /></G>);
+const IconDupG = () => (<G><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></G>);
+const IconOwnG = () => (<G><circle cx="9" cy="8" r="3" /><path d="M3 20a6 6 0 0 1 12 0" /><path d="M16 6a3 3 0 0 1 0 6" /></G>);
+const IconTarget = ({ className }: { className?: string }) => (<G className={className}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r="0.6" fill="currentColor" /></G>);
+const IconEye = ({ className }: { className?: string }) => (<G className={className}><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></G>);
+const IconPlayG = ({ className }: { className?: string }) => (<G className={className}><path d="M7 5l12 7-12 7z" fill="currentColor" stroke="none" /></G>);
+const IconStopG = ({ className }: { className?: string }) => (<G className={className}><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none" /></G>);
+const IconRescanG = ({ className }: { className?: string }) => (<G className={className}><path d="M20 11a8 8 0 1 0-.5 4" /><path d="M20 5v6h-6" /></G>);
+const IconCheckG = ({ className }: { className?: string }) => (<G className={className}><path d="m5 12 5 5 9-11" /></G>);
+const IconXG = ({ className }: { className?: string }) => (<G className={className}><path d="M6 6l12 12M18 6 6 18" /></G>);
+
+const TYPE_META: Record<PulseCardType, { label: string; accent: string; Glyph: () => JSX.Element }> = {
+  drift: { label: "Decision drift", accent: "var(--drift)", Glyph: IconDriftG },
+  duplicate: { label: "Duplicate work", accent: "var(--duplicate)", Glyph: IconDupG },
+  ownership: { label: "Ownership risk", accent: "var(--ownership)", Glyph: IconOwnG },
 };
 
 function relTime(iso: string): string {
@@ -161,11 +175,12 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
           <div className="flex shrink-0 gap-2">
             {count > 0 && !loading && (
               <button type="button" onClick={speaking ? stopSpeak : speakBriefing} className="btn" title="Read the briefing aloud">
-                {speaking ? "⏹ Stop" : "▶ Play"}
+                {speaking ? <IconStopG className="h-3.5 w-3.5" /> : <IconPlayG className="h-3.5 w-3.5" />}
+                {speaking ? "Stop" : "Play"}
               </button>
             )}
             <button type="button" onClick={() => void load(true)} className="btn" disabled={loading}>
-              <span className={loading ? "animate-spin" : ""}>↻</span>
+              <IconRescanG className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
               {loading ? "Scanning" : "Re-scan"}
             </button>
           </div>
@@ -228,7 +243,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="brief-tag">
-                    <span aria-hidden>{meta.glyph}</span>
+                    <meta.Glyph />
                     {meta.label}
                   </span>
                   <div className="flex items-center gap-2 text-[11px] text-faint">
@@ -273,10 +288,11 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
 
                 <div className="mt-4 flex items-center gap-2 pt-3" style={{ borderTop: "1px solid var(--line)" }}>
                   {verdict ? (
-                    <span className="text-xs text-faint">
+                    <span className="flex items-center gap-1.5 text-xs text-faint">
+                      {verdict === "confirmed" ? <IconCheckG className="h-3.5 w-3.5" /> : <IconXG className="h-3.5 w-3.5" />}
                       {verdict === "confirmed"
-                        ? "✓ Confirmed — Trace will remember this matters."
-                        : "✕ Dismissed — Trace won't raise this again."}
+                        ? "Confirmed — Trace will remember this matters."
+                        : "Dismissed — Trace won't raise this again."}
                     </span>
                   ) : (
                     <>
@@ -286,7 +302,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
                         className="btn-ghost text-accent"
                         title="This is a real, useful catch. Trace reinforces it in memory — raising its precision score."
                       >
-                        ✓ Confirm
+                        <IconCheckG className="h-3.5 w-3.5" /> Confirm
                       </button>
                       <button
                         type="button"
@@ -294,7 +310,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
                         className="btn-ghost"
                         title="Intentional / not a real problem. Trace suppresses it and won't raise this finding again."
                       >
-                        ✕ Not real
+                        <IconXG className="h-3.5 w-3.5" /> Not real
                       </button>
                       {onCiteNodes && (
                         <button type="button" onClick={() => onCiteNodes(card)} className="btn-ghost ml-auto">
@@ -320,7 +336,7 @@ function PrecisionMeter({ stats }: { stats: Stats | null }) {
   if (graded === 0) {
     return (
       <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] text-faint" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }} title="Confirm or dismiss findings — Trace's precision improves as you grade">
-        <span aria-hidden>🎯</span> Precision · grade findings to train Trace
+        <IconTarget className="h-3.5 w-3.5" /> Precision · grade findings to train Trace
       </span>
     );
   }
@@ -332,7 +348,7 @@ function PrecisionMeter({ stats }: { stats: Stats | null }) {
       style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }}
       title={`${confirmed} confirmed · ${dismissed} dismissed — precision = confirmed ÷ graded, and it climbs as the team trains Trace`}
     >
-      <span aria-hidden>🎯</span>
+      <IconTarget className="h-3.5 w-3.5" />
       <span className="text-dim">Precision</span>
       <span className="tabular-nums" style={{ color }}>{pct}%</span>
       <span className="relative h-1.5 w-14 overflow-hidden rounded-full" style={{ background: "var(--line)" }}>
@@ -371,7 +387,7 @@ function SourceCoverage({ coverage, nodeCount }: { coverage: { channels: number;
   parts.push(`${nodeCount || 0} in memory`);
   return (
     <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] text-dim" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }} title="Sources Trace is watching and how much it has learned">
-      <span aria-hidden>👁</span>
+      <IconEye className="h-3.5 w-3.5" />
       Watching {parts.join(" · ")}
     </span>
   );

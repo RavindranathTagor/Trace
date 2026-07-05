@@ -63,12 +63,12 @@ export async function POST(req: NextRequest) {
   const e = payload.event;
   // @mention the bot → answer the question from memory (parity with Discord).
   if (e?.type === "app_mention" && e.text?.trim() && isCogneeEnabled()) {
-    void handleSlackMention(e.text.trim(), e.channel, e.thread_ts || e.ts);
+    void handleSlackMention(e.text.trim(), e.user, e.channel);
     return NextResponse.json({ ok: true });
   }
   // Any other channel message → ingest + guard for drift/duplication.
   if (e?.type === "message" && !e.subtype && !e.bot_id && e.text?.trim() && isCogneeEnabled()) {
-    void handleSlackMessage(e.text.trim(), e.user, e.channel, e.thread_ts || e.ts);
+    void handleSlackMessage(e.text.trim(), e.user, e.channel);
   }
   return NextResponse.json({ ok: true });
 }
@@ -86,7 +86,7 @@ async function slackPost(channel: string, text: string, thread_ts?: string) {
 
 // Q&A: strip the bot mention, recall from memory (chunks + graph + composed answer),
 // and reply in-thread with a cited answer.
-async function handleSlackMention(text: string, channel: string | undefined, ts: string | undefined) {
+async function handleSlackMention(text: string, user: string | undefined, channel: string | undefined) {
   const query = text.replace(/<@[^>]+>/g, "").trim();
   if (!query || !channel) return;
   let answer = "I couldn't find that in the team's memory yet.";
@@ -106,23 +106,24 @@ async function handleSlackMention(text: string, channel: string | undefined, ts:
   } catch {
     answer = "The team memory service is unavailable right now.";
   }
-  await slackPost(channel, `*Trace*\n${answer}`, ts);
+  // Discord-style reply: post INLINE in the channel (no thread) with the asker's
+  // question quoted as the reply reference, then the clean answer. No "*Trace*"
+  // header — Slack already shows the bot's name + avatar, just like Discord.
+  const reference = `> ${user ? `<@${user}> ` : ""}${query}`;
+  await slackPost(channel, `${reference}\n${answer}`);
 }
 
-async function handleSlackMessage(text: string, user: string | undefined, channel: string | undefined, ts: string | undefined) {
+async function handleSlackMessage(text: string, user: string | undefined, channel: string | undefined) {
   enqueueIngest([`slack ${user ? `<@${user}>` : ""}: ${text}`]);
   try {
     const alert = await checkMessage(text, user ? `<@${user}>` : undefined);
-    const { slack } = getIntegrations();
-    if (alert && channel && slack.botToken) {
+    if (alert && channel) {
+      // Discord-style inline reply: quote the message that triggered it, then the
+      // cited prior decision — posted inline in the channel (no thread wrap).
+      const reference = `> ${user ? `<@${user}> ` : ""}${text.slice(0, 220)}`;
       const cite = `> ${alert.prior.quote}${alert.prior.who ? ` — ${alert.prior.who}` : ""}`;
-      const msg = `⚠️ *Trace · ${alert.headline}*\nThis may reverse an earlier decision:\n${cite}\n${alert.why}`;
-      await fetch("https://slack.com/api/chat.postMessage", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${slack.botToken}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ channel, text: msg, thread_ts: ts }),
-        signal: AbortSignal.timeout(10000),
-      });
+      const body = `${reference}\n⚠️ *Trace · ${alert.headline}*\nThis may reverse an earlier decision:\n${cite}\n${alert.why}`;
+      await slackPost(channel, body);
     }
   } catch {
     /* best-effort */

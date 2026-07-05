@@ -5,6 +5,7 @@ import AddSource from "@/components/AddSource";
 import { DiscordLogo, GitHubLogo, SlackLogo, TeamsLogo } from "@/components/Logos";
 import { IllusConnect } from "@/components/Illustrations";
 import BrainApiCard from "@/components/BrainApiCard";
+import BrainContextCard from "@/components/BrainContextCard";
 
 interface Status {
   discord: { configured: boolean; tokenHint?: string; channelId: string; inviteUrl: string | null; bot: { status: string; logs: string[]; lastError?: string } };
@@ -63,10 +64,13 @@ const STEPS: Record<string, { how: string[]; use: string; link: { url: string; l
   },
 };
 
+type Tab = "connect" | "brain";
+
 export default function IntegrationsHub({ onIngested }: { onIngested: () => void }) {
   const [s, setS] = useState<Status | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ text: string; kind: "ok" | "err" } | null>(null);
+  const [tab, setTab] = useState<Tab>("connect");
 
   // form fields
   const [dToken, setDToken] = useState("");
@@ -74,6 +78,8 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
   const [ghToken, setGhToken] = useState("");
   const [ghRepo, setGhRepo] = useState("");
   const [ghUrl, setGhUrl] = useState("");
+  const [ghRepos, setGhRepos] = useState<{ full_name: string; private: boolean }[]>([]);
+  const [loadingRepos, setLoadingRepos] = useState(false);
   const [slHook, setSlHook] = useState("");
   const [slBot, setSlBot] = useState("");
   const [slChannel, setSlChannel] = useState("");
@@ -104,45 +110,79 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
     }
   };
 
+  // Fetch the repos this PAT can access so the user can pick from a dropdown.
+  const loadRepos = async () => {
+    if (!ghToken.trim()) return;
+    setLoadingRepos(true);
+    setMsg(null);
+    try {
+      const { ok, data } = await jpost("/api/integrations/github/repos", { token: ghToken.trim() });
+      const repos = (data.repos as { full_name: string; private: boolean }[]) || [];
+      if (ok && repos.length) {
+        setGhRepos(repos);
+        if (!ghRepo) setGhRepo(repos[0].full_name);
+      } else {
+        setMsg({ text: ok ? "No repositories found for this token." : data.error || "Couldn't load repositories.", kind: "err" });
+      }
+    } finally {
+      setLoadingRepos(false);
+    }
+  };
+
   const running = s?.discord.bot.status === "running";
 
   return (
     <div className="space-y-5">
+      {/* Compact header + tabs so the page reads as two short views, not one long column */}
       <div className="card flex items-center gap-4 overflow-hidden p-5">
         <div className="min-w-0 flex-1">
-          <h3 className="text-base font-semibold text-ink">Connect your team&apos;s tools</h3>
+          <h3 className="text-base font-semibold text-ink">Sources &amp; integrations</h3>
           <p className="mt-1 text-[13px] leading-relaxed text-dim">
-            A few clicks — Trace starts building memory and catching drift automatically. Tokens stay server-side.
+            Connect your team&apos;s tools and Trace builds memory + catches drift automatically. Tokens stay server-side.
           </p>
-          <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-[12px]">
-            {[
-              "Paste a token or webhook URL",
-              "Trace builds your decision memory",
-              "It catches drift & posts briefings",
-            ].map((t, i) => (
-              <li key={i} className="flex items-center gap-1.5 text-dim">
-                <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full text-[10px] font-semibold" style={{ background: "var(--accent-soft)", color: "var(--accent-ink)" }}>{i + 1}</span>
-                {t}
-              </li>
-            ))}
-          </ol>
         </div>
-        <IllusConnect className="hidden h-24 w-auto shrink-0 sm:block" />
+        <IllusConnect className="hidden h-20 w-auto shrink-0 sm:block" />
       </div>
 
-      <p className="flex items-start gap-2 rounded-lg px-3 py-2 text-[12px] text-dim" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }}>
-        <span aria-hidden>💡</span>
-        <span>New here? Hover the <InfoDot /> on any tool for step-by-step setup. Two-way agents (Discord, GitHub) catch drift live; Slack &amp; Teams receive briefings.</span>
-      </p>
-
-      {/* Company Brain API — the agent-facing endpoint, live and demoable */}
-      <BrainApiCard />
+      <div className="flex items-center gap-1 rounded-xl p-1" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }}>
+        {([
+          { id: "connect", label: "Channels, repos & files" },
+          { id: "brain", label: "Company Brain API" },
+        ] as const).map((t) => {
+          const on = tab === t.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className="flex-1 rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-colors"
+              style={{ background: on ? "var(--surface)" : "transparent", color: on ? "var(--ink)" : "var(--ink-dim)", boxShadow: on ? "var(--shadow-sm)" : "none" }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
 
       {msg && (
         <div className="rounded-lg px-3 py-2 text-[13px]" style={{ background: msg.kind === "ok" ? "oklch(0.5 0.13 155 / 0.1)" : "color-mix(in oklab, var(--drift) 10%, transparent)", color: msg.kind === "ok" ? "oklch(0.45 0.13 155)" : "var(--drift)" }}>
           {msg.text}
         </div>
       )}
+
+      {tab === "brain" ? (
+        <div className="space-y-5">
+          {/* Company Brain API — the agent-facing endpoint, live and demoable */}
+          <BrainApiCard />
+          {/* Pre-code context pack — what every coding agent gets before it writes code */}
+          <BrainContextCard />
+        </div>
+      ) : (
+      <div className="space-y-5">
+      <p className="flex items-start gap-2 rounded-lg px-3 py-2 text-[12px] text-dim" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }}>
+        <IconTip className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+        <span>New here? Hover the <InfoDot /> on any tool for step-by-step setup. Two-way agents (Discord, GitHub) catch drift live; Slack &amp; Teams receive briefings.</span>
+      </p>
 
       {/* Connect your tools — 2-up grid so it reads as a set, not a long column */}
       <div className="text-[11px] font-semibold uppercase tracking-wide text-faint">Channels &amp; repos</div>
@@ -154,7 +194,7 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
             <Row label="Bot token" value={s.discord.tokenHint ?? "saved"} />
             {s.discord.inviteUrl && (
               <a href={s.discord.inviteUrl} target="_blank" rel="noopener noreferrer" className="btn w-full justify-center">
-                ↗ Invite the bot to your server
+                Invite the bot to your server →
               </a>
             )}
             <div className="flex gap-2">
@@ -178,7 +218,11 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
                 Disconnect
               </button>
             </div>
-            {s.discord.bot.lastError && <p className="text-[11px]" style={{ color: "var(--drift)" }}>⚠ {s.discord.bot.lastError}</p>}
+            {s.discord.bot.lastError && (
+              <p className="flex items-start gap-1.5 text-[11px]" style={{ color: "var(--drift)" }}>
+                <IconWarn className="mt-0.5 h-3 w-3 shrink-0" /> {s.discord.bot.lastError}
+              </p>
+            )}
           </div>
         ) : (
           <div className="space-y-2.5">
@@ -211,7 +255,27 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
               <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">GitHub settings</a>. Trace creates the webhook for you.
             </p>
             <input className="input" placeholder="GitHub token (github_pat_… or ghp_…)" value={ghToken} onChange={(e) => setGhToken(e.target.value)} />
-            <input className="input" placeholder="Repo — owner/name" value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} />
+
+            {/* Repo: pick from a dropdown of the token's repos, or type it manually. */}
+            {ghRepos.length > 0 ? (
+              <div className="flex gap-2">
+                <select className="input flex-1" aria-label="Repository to watch" title="Repository to watch" value={ghRepo} onChange={(e) => setGhRepo(e.target.value)}>
+                  <option value="" disabled>Select a repository…</option>
+                  {ghRepos.map((r) => (
+                    <option key={r.full_name} value={r.full_name}>{r.full_name}{r.private ? " (private)" : ""}</option>
+                  ))}
+                </select>
+                <button type="button" className="btn shrink-0" title="Type the repo manually instead" onClick={() => setGhRepos([])}>Type</button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input className="input flex-1" placeholder="Repo — owner/name" value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} />
+                <button type="button" className="btn shrink-0" disabled={!ghToken.trim() || loadingRepos} title="List repositories this token can access" onClick={loadRepos}>
+                  {loadingRepos ? "Loading…" : "Load my repos"}
+                </button>
+              </div>
+            )}
+
             <input className="input" placeholder="Public URL (your tunnel, https://…)" value={ghUrl} onChange={(e) => setGhUrl(e.target.value)} />
             <button type="button" className="btn-primary w-full" disabled={busy === "gh" || !ghToken.trim() || !ghRepo.trim() || !ghUrl.trim()} onClick={() => run("gh", () => jpost("/api/integrations/github", { token: ghToken.trim(), repo: ghRepo.trim(), publicUrl: ghUrl.trim() }), "Connected — webhook created. Open a PR to test.")}>
               {busy === "gh" ? "Creating webhook…" : "Connect GitHub"}
@@ -286,6 +350,8 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
       <div className="card p-5">
         <AddSource onIngested={onIngested} />
       </div>
+      </div>
+      )}
     </div>
   );
 }
@@ -310,6 +376,22 @@ function Card({ logo, name, connected, status, info, children }: { logo: React.R
     </div>
   );
 }
+
+const IconTip = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+    <path d="M9 18h6M10 21h4" /><path d="M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.3 1 2.1V16h6v-.4c0-.8.4-1.5 1-2.1A6 6 0 0 0 12 3z" />
+  </svg>
+);
+const IconWarn = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+    <path d="M12 3 2 20h20L12 3z" /><path d="M12 10v4M12 17h.01" />
+  </svg>
+);
+const IconDoc = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+    <path d="M6 3h8l4 4v14H6z" /><path d="M14 3v4h4M9 12h6M9 16h6" />
+  </svg>
+);
 
 /** The little "i" glyph (also used inline in the intro line). */
 function InfoDot() {
@@ -364,7 +446,7 @@ function InfoTip({ title, info }: { title: string; info: StepInfo }) {
             rel="noopener noreferrer"
             className="mt-2 inline-flex items-center gap-1 text-[12px] font-medium text-accent hover:underline"
           >
-            📖 {info.link.label} →
+            <IconDoc className="h-3.5 w-3.5" /> {info.link.label} →
           </a>
         )}
       </span>

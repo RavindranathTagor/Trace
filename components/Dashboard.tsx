@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import DecisionGraph from "@/components/DecisionGraph";
-import AskPanel from "@/components/AskPanel";
-import VoiceAgent from "@/components/VoiceAgent";
+import AskTalk from "@/components/AskTalk";
 import IntegrationsHub from "@/components/IntegrationsHub";
 import ModelSelector from "@/components/ModelSelector";
 import DigestFeed from "@/components/DigestFeed";
@@ -24,14 +23,13 @@ interface GraphResponse extends GraphData {
   source: "cognee" | "mock";
 }
 
-type View = "briefing" | "graph" | "timeline" | "ask" | "talk" | "whatif" | "sources";
+type View = "briefing" | "graph" | "timeline" | "ask" | "whatif" | "sources";
 
 const NAV: { id: View; label: string; icon: JSX.Element; hint: string }[] = [
   { id: "briefing", label: "Briefing", icon: <IconBriefing />, hint: "What your team forgot today" },
   { id: "graph", label: "Graph", icon: <IconGraph />, hint: "The living decision graph" },
   { id: "timeline", label: "Timeline", icon: <IconTimeline />, hint: "Decisions over time — and reversals" },
-  { id: "ask", label: "Ask", icon: <IconAsk />, hint: "Query the memory, get cited answers" },
-  { id: "talk", label: "Talk", icon: <IconMic />, hint: "Ask by voice" },
+  { id: "ask", label: "Ask", icon: <IconAsk />, hint: "Query the memory by text or voice, get cited answers" },
   { id: "whatif", label: "What-if", icon: <IconFuture />, hint: "Project the impact if someone leaves" },
   { id: "sources", label: "Sources", icon: <IconPlug />, hint: "Connect Discord, GitHub, files" },
 ];
@@ -165,25 +163,29 @@ export default function Dashboard({ autoTour = false }: { autoTour?: boolean }) 
 
         <main className="min-h-0 flex-1 overflow-y-auto" style={{ background: "var(--canvas)" }}>
           {view === "briefing" && (
-            <div className="mx-auto max-w-2xl space-y-6 px-6 py-9">
-              {/* The briefing itself — the reason you're here (findings + Play / Re-scan). */}
-              <DigestFeed
-                nodeCount={graph.nodes.length}
-                onCiteNodes={(card) => {
-                  const text = `${card.title} ${card.detail} ${card.sources.map((s) => s.quote).join(" ")}`;
-                  revealHighlights(nodeIdsInText(graph.nodes, text));
-                  setView("graph");
-                }}
-              />
+            <div className="mx-auto max-w-6xl px-6 py-9">
+              <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+                {/* The briefing itself — the reason you're here (findings + Play / Re-scan). */}
+                <div className="min-w-0">
+                  <DigestFeed
+                    nodeCount={graph.nodes.length}
+                    onCiteNodes={(card) => {
+                      const text = `${card.title} ${card.detail} ${card.sources.map((s) => s.quote).join(" ")}`;
+                      revealHighlights(nodeIdsInText(graph.nodes, text));
+                      setView("graph");
+                    }}
+                  />
+                </div>
 
-              {/* Act on it — deliver to the channels you pick. */}
-              <BriefingDeliver />
-
-              {/* Supporting context: cross-source PR catches + the decision history. */}
-              <div className="space-y-4 border-t pt-6" style={{ borderColor: "var(--line)" }}>
-                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">More context</div>
-                <GitHubDrift />
-                <CompanyTimelineStrip onOpen={() => setView("timeline")} />
+                {/* Sidebar: act on it + supporting context — beside the feed, not below. */}
+                <aside className="space-y-5 lg:sticky lg:top-0 lg:self-start">
+                  <BriefingDeliver />
+                  <div className="space-y-4 border-t pt-5" style={{ borderColor: "var(--line)" }}>
+                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">More context</div>
+                    <GitHubDrift />
+                    <CompanyTimelineStrip onOpen={() => setView("timeline")} />
+                  </div>
+                </aside>
               </div>
             </div>
           )}
@@ -223,15 +225,7 @@ export default function Dashboard({ autoTour = false }: { autoTour?: boolean }) 
           {view === "ask" && (
             <div className="mx-auto max-w-2xl px-6 py-9">
               <div className="card min-h-[60vh] p-6">
-                <AskPanel onHighlight={revealHighlights} graphNodes={graph.nodes} />
-              </div>
-            </div>
-          )}
-
-          {view === "talk" && (
-            <div className="mx-auto max-w-2xl px-6 py-9">
-              <div className="card min-h-[60vh] p-6">
-                <VoiceAgent onHighlight={setHighlightedIds} graphNodes={graph.nodes} />
+                <AskTalk onHighlight={revealHighlights} graphNodes={graph.nodes} />
               </div>
             </div>
           )}
@@ -243,7 +237,7 @@ export default function Dashboard({ autoTour = false }: { autoTour?: boolean }) 
           )}
 
           {view === "sources" && (
-            <div className="mx-auto max-w-2xl px-6 py-9">
+            <div className="mx-auto max-w-5xl px-6 py-9">
               <IntegrationsHub onIngested={() => void refresh()} />
             </div>
           )}
@@ -373,13 +367,6 @@ function IconAsk() {
   return (
     <svg viewBox="0 0 24 24" fill="none" className="h-[18px] w-[18px]" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 5h16v11H9l-4 3v-3H4z" />
-    </svg>
-  );
-}
-function IconMic() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="h-[18px] w-[18px]" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-      <rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
     </svg>
   );
 }

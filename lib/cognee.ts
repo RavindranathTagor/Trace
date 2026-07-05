@@ -319,16 +319,68 @@ export async function add(texts: string[], nodeSet?: string[]): Promise<void> {
   await writeAll("/add", makeInit, 120000, "add");
 }
 
-/** cognify: build the knowledge graph on the written-to backend. BLOCKING per target so the
- *  data is immediately queryable and failures surface. (Local Ollama ~10s/chunk.) */
+// Dataset UUID is stable per name — resolve once so we can poll pipeline status.
+let cachedDatasetId: string | null = null;
+async function resolveDatasetId(): Promise<string | null> {
+  if (cachedDatasetId) return cachedDatasetId;
+  try {
+    const res = await expectOk(await api("/datasets/", { method: "GET" }, 15000), "datasets");
+    const list = (await res.json()) as Array<{ id?: string; name?: string }>;
+    cachedDatasetId = (Array.isArray(list) ? list.find((d) => d.name === DATASET)?.id : undefined) ?? null;
+  } catch {
+    /* leave null → cognify falls back to a fixed wait */
+  }
+  return cachedDatasetId;
+}
+
+/** Poll GET /datasets/status?dataset=<id> until the pipeline is terminal or the
+ *  deadline passes. Cheap, bounded reads — never a long-held blocking connection. */
+async function awaitCognify(datasetId: string | null, maxMs: number): Promise<void> {
+  if (!datasetId) {
+    // No id to poll → a short fixed wait so we don't immediately launch an
+    // overlapping cognify job on the same tenant.
+    await new Promise((r) => setTimeout(r, 8000));
+    return;
+  }
+  const deadline = Date.now() + maxMs;
+  while (Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, 4000));
+    try {
+      const res = await api(`/datasets/status?dataset=${encodeURIComponent(datasetId)}`, { method: "GET" }, 12000);
+      if (!res.ok) continue;
+      const map = (await res.json()) as Record<string, string>;
+      const st = (map[datasetId] ?? Object.values(map)[0] ?? "").toLowerCase();
+      if (st === "completed" || st === "failed") return;
+    } catch {
+      /* keep polling until the deadline */
+    }
+  }
+}
+
+/** cognify: build the knowledge graph. Runs ASYNC (run_in_background) — a BLOCKING
+ *  cognify pins the managed tenant's single worker, so every other call (even
+ *  /health) times out for the whole extraction; async keeps it query-able (Cognee
+ *  supports concurrent search during cognify). We poll dataset status so callers
+ *  still know when the data is ready and we never overlap two cognify jobs. */
 export async function cognify(customPrompt?: string): Promise<void> {
   const body = JSON.stringify({
     datasets: [DATASET],
-    run_in_background: false,
+    run_in_background: true,
     chunk_size: 1024,
     ...(customPrompt ? { custom_prompt: customPrompt } : {}),
   });
-  await writeAll("/cognify", () => ({ method: "POST", body }), 300000, "cognify");
+  // Kick off — returns fast with PipelineRunInfo (may carry dataset_id).
+  const res = await expectOk(await api("/cognify", { method: "POST", body }, 30000), "cognify");
+  let datasetId: string | null = null;
+  try {
+    const info = await res.json();
+    const one = Array.isArray(info) ? info[0] : info;
+    datasetId = one?.dataset_id ?? one?.datasetId ?? null;
+  } catch {
+    /* fall through to lookup */
+  }
+  if (!datasetId) datasetId = await resolveDatasetId();
+  await awaitCognify(datasetId, 240000);
 }
 
 /** remember = add + cognify. */

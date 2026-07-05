@@ -129,15 +129,46 @@ export function startBot(): { ok: boolean; error?: string } {
   return spawnChild();
 }
 
-/** Re-spawn the bot on server boot if the user had it running (integrations
- *  autoStart flag) but the child is gone — a dev-server restart kills the child,
- *  so this makes the agent self-heal. Called from the polled /api/integrations GET.
- *  Only acts from a clean "stopped" state, with a cooldown so it never storms. */
+/** True when the child process is spawned and hasn't exited. */
+function childAlive(): boolean {
+  return !!state.child && state.child.exitCode === null && !state.child.killed;
+}
+
+/** Re-spawn the bot if the user had it running (autoStart flag) but the child is
+ *  gone or stuck — a dev-server restart kills the child, and a poll-triggered spawn
+ *  in a torn-down worker can leave a phantom "starting" status with no process. This
+ *  self-heals from ANY unhealthy state. Called from the polled /api/integrations GET
+ *  and from the server-boot hook. Cooldown so it never storms. */
 export function maybeAutoStart(): void {
   const { discord } = getIntegrations();
   if (!discord.token || !discord.autoStart) return;
-  if (state.status !== "stopped" || state.child) return;
+  // A live child that is running or still connecting → leave it alone.
+  if (childAlive() && (state.status === "running" || state.status === "starting")) return;
+  // No live child (stopped / error / phantom "starting") → (re)start with a cooldown.
   if (state.lastAutoStart && Date.now() - state.lastAutoStart < 15_000) return;
+  state.lastAutoStart = Date.now();
+  if (!childAlive()) {
+    // Clear any phantom status/timer so startBot() actually spawns.
+    if (state.restartTimer) {
+      clearTimeout(state.restartTimer);
+      state.restartTimer = null;
+    }
+    state.child = null;
+    state.status = "stopped";
+  }
+  startBot();
+}
+
+/** Server-boot entry (from instrumentation.ts). Fresh process → auto-start the agent
+ *  if it was left running, reliably, regardless of which page is open. */
+export function bootAutoStart(): void {
+  const { discord } = getIntegrations();
+  if (!discord.token || !discord.autoStart) return;
+  // On a fresh boot the previous child is already dead; reset stale state and start.
+  state.child = null;
+  state.status = "stopped";
+  state.restarts = 0;
+  state.intentionalStop = false;
   state.lastAutoStart = Date.now();
   startBot();
 }

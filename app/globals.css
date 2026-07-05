@@ -221,6 +221,56 @@ body {
     stroke-dashoffset: 0;
   }
 }
+/* Agentic pipeline: a packet of light travels down a connector, forever. */
+@keyframes trace-travel {
+  0% {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(var(--travel, 34px));
+    opacity: 0;
+  }
+}
+/* Soft focus ring that breathes on the active node. */
+@keyframes trace-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--accent) 15%, transparent);
+  }
+}
+/* Gentle opacity breathe for a sequence of items lighting up. */
+@keyframes trace-breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+/* Horizontal packet — a light travels a ruler/rail left→right (sibling of trace-travel). */
+@keyframes trace-travel-x {
+  0% {
+    transform: translateX(var(--tx0, 0));
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--tx1, 120px));
+    opacity: 0;
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   .trace-rise {
     animation: trace-rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -237,5 +287,17 @@ body {
   }
   .trace-draw {
     animation: trace-draw 0.8s ease-out both;
+  }
+  .trace-travel {
+    animation: trace-travel 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .trace-glow {
+    animation: trace-glow 2.6s ease-in-out infinite;
+  }
+  .trace-breathe {
+    animation: trace-breathe 2.8s ease-in-out infinite;
+  }
+  .trace-travel-x {
+    animation: trace-travel-x 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
 }

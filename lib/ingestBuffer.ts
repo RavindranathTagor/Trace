@@ -23,9 +23,10 @@ interface BufferState {
   firstEnqueuedAt: number;
   cognifying: boolean;
   pending: boolean; // work arrived while a flush was in flight
+  addFailures: number; // consecutive add failures → exponential backoff (Cloud outage)
 }
 const g = globalThis as unknown as { __traceIngestBuffer?: BufferState };
-const s = (g.__traceIngestBuffer ??= { buffer: [], timer: null, firstEnqueuedAt: 0, cognifying: false, pending: false });
+const s = (g.__traceIngestBuffer ??= { buffer: [], timer: null, firstEnqueuedAt: 0, cognifying: false, pending: false, addFailures: 0 });
 
 export interface IngestStatus {
   buffered: number;
@@ -68,12 +69,19 @@ export async function flush(): Promise<void> {
     // enqueues, the re-queued batch would be stranded until the next message.
     try {
       await add(batch);
+      s.addFailures = 0; // reachable again
     } catch (err) {
-      console.error("[ingestBuffer] add failed, re-queueing batch:", err instanceof Error ? err.message : err);
       s.buffer.unshift(...batch);
+      s.addFailures += 1;
+      // Exponential backoff during an outage (5s, 10s, 20s, 40s, cap 60s) so we don't
+      // hammer a down Cloud or spam logs; log only the first failure + then every 5th.
+      const delay = Math.min(60_000, RETRY_MS * 2 ** (s.addFailures - 1));
+      if (s.addFailures === 1 || s.addFailures % 5 === 0) {
+        console.warn(`[ingestBuffer] add failed (x${s.addFailures}), retrying in ${delay / 1000}s:`, err instanceof Error ? err.message : err);
+      }
       // `finally` clears `cognifying`; re-arm a timer so the retry actually fires.
       if (s.timer) clearTimeout(s.timer);
-      s.timer = setTimeout(() => void flush(), RETRY_MS);
+      s.timer = setTimeout(() => void flush(), delay);
       return;
     }
     // `add` succeeded (chunks are stored). Build the graph; retry once on a

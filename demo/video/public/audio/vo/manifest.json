@@ -1,0 +1,134 @@
+[
+  {
+    "id": "n01",
+    "beat": 1,
+    "mood": "excited",
+    "text": "That's Trace — and it is not a chatbot you query."
+  },
+  {
+    "id": "n02",
+    "beat": 1,
+    "mood": "excited",
+    "text": "It's an agent that watches your team, and speaks up the second you contradict yourselves."
+  },
+  {
+    "id": "n03",
+    "beat": 1,
+    "mood": "confident",
+    "text": "Observe. Remember. Reason. Detect. Guard. Learn."
+  },
+  {
+    "id": "n04",
+    "beat": 2,
+    "mood": "warm",
+    "text": "Here's a real engineering team — Sandesh, Ravindra, Pushpa and Ashwini — shipping fast across Slack and Discord."
+  },
+  {
+    "id": "n05",
+    "beat": 2,
+    "mood": "curious",
+    "text": "Nobody is querying anything. Trace is simply watching."
+  },
+  {
+    "id": "n06",
+    "beat": 3,
+    "mood": "excited",
+    "text": "Sandesh reaches for MongoDB on the new billing service. But months ago, Ravindra standardized every new service on PostgreSQL. Trace catches it instantly — cited, dated, and owned."
+  },
+  {
+    "id": "n07",
+    "beat": 4,
+    "mood": "excited",
+    "text": "Then Sandesh pushes on-prem for a big customer. But the roadmap said cloud-only. Trace flags the reversal, and loops in Ashwini."
+  },
+  {
+    "id": "n08",
+    "beat": 5,
+    "mood": "excited",
+    "text": "Pushpa starts a retry queue — one that Ravindra already shipped in platform-core. Duplicate work, caught before a day is wasted."
+  },
+  {
+    "id": "n09",
+    "beat": 6,
+    "mood": "curious",
+    "text": "And when you do want to ask, it answers — with citations."
+  },
+  {
+    "id": "n10",
+    "beat": 6,
+    "mood": "confident",
+    "text": "What did we decide about our database? It traces straight back to Ravindra's Q1 call."
+  },
+  {
+    "id": "n11",
+    "beat": 7,
+    "mood": "serious",
+    "text": "And when there is nothing to say, it says nothing."
+  },
+  {
+    "id": "n12",
+    "beat": 8,
+    "mood": "confident",
+    "text": "Underneath is one Cognee temporal knowledge graph."
+  },
+  {
+    "id": "n13",
+    "beat": 8,
+    "mood": "excited",
+    "text": "When you drift, it walks the graph back to the exact decision, and pulls it into the light."
+  },
+  {
+    "id": "n14",
+    "beat": 8,
+    "mood": "serious",
+    "text": "One graph-completion call retrieves the prior decision and judges the contradiction, in a single hop."
+  },
+  {
+    "id": "n15",
+    "beat": 9,
+    "mood": "serious",
+    "text": "The money shot. A pull request migrates billing to MongoDB. Trace comments on the pull request itself, citing Ravindra's call. Decided in Slack — enforced on GitHub."
+  },
+  {
+    "id": "n16",
+    "beat": 10,
+    "mood": "excited",
+    "text": "Here's the twist. In 2026, your code is written by a whole fleet of A-I agents that forget."
+  },
+  {
+    "id": "n17",
+    "beat": 10,
+    "mood": "curious",
+    "text": "So before Cursor writes a line, it asks Trace: has the team already decided this? Postgres. Decided by Ravindra. Mongo, rejected. It corrects itself."
+  },
+  {
+    "id": "n18",
+    "beat": 10,
+    "mood": "confident",
+    "text": "One endpoint. Every agent. The same company brain."
+  },
+  {
+    "id": "n19",
+    "beat": 11,
+    "mood": "serious",
+    "text": "And it watches the people, not just the code. Authentication is owned by Ravindra alone — and he is on leave next month."
+  },
+  {
+    "id": "n20",
+    "beat": 11,
+    "mood": "serious",
+    "text": "Ask what breaks if he is out, and every consequence is cited to a real message."
+  },
+  {
+    "id": "n21",
+    "beat": 12,
+    "mood": "confident",
+    "text": "Trace. It observes, remembers, reasons — and it acts. Nobody has to ask."
+  },
+  {
+    "id": "n22",
+    "beat": 12,
+    "mood": "warm",
+    "text": "Your team's memory — with a pulse."
+  }
+]

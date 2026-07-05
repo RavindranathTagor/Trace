@@ -11,13 +11,8 @@
 // Precision is everything here: a false "you contradicted yourself" ping kills trust.
 // We only alert on a clearly-supported contradiction/duplication.
 
-import { config, isBaselineEnabled } from "@/lib/config";
 import { searchChunks, search, completeWithCognee } from "@/lib/cognee";
-
-const GUARD_MODEL = process.env.PULSE_MODEL || "llama-3.3-70b-versatile";
-// On a 429, retry on a SMALLER model — it's a separate Groq rate-limit bucket, so
-// when the 70B bucket is saturated the 8B one usually still has headroom.
-const GUARD_FALLBACK_MODEL = "llama-3.1-8b-instant";
+import { chatComplete, llmAvailable } from "@/lib/llm";
 
 export interface GuardAlert {
   kind: "drift" | "duplicate";
@@ -104,9 +99,10 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
     console.error("[guard] Cognee judge unavailable, falling back:", err instanceof Error ? err.message : err);
   }
 
-  // 2) FALLBACK — retrieve evidence ourselves and judge with Groq. Only when the
-  // baseline key is set; otherwise Cognee was our only judge and we stay silent.
-  if (!isBaselineEnabled()) return null;
+  // 2) FALLBACK — retrieve evidence ourselves and judge via the LLM failover chain
+  // (Groq → Google → Ollama). Only when at least one provider is configured;
+  // otherwise Cognee was our only judge and we stay silent.
+  if (!llmAvailable()) return null;
 
   const head = msg.slice(0, 48).toLowerCase();
   const [chunks, gctx] = await Promise.all([
@@ -129,37 +125,13 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
   if (prior.length === 0) return null;
 
   const evidence = prior.map((t, i) => `[${i + 1}] ${t}`).join("\n");
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const res = await fetch(`${config.baseline.baseUrl}/chat/completions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${config.baseline.apiKey}` },
-        body: JSON.stringify({
-          model: attempt === 1 ? GUARD_MODEL : GUARD_FALLBACK_MODEL,
-          messages: [
-            { role: "system", content: SYSTEM },
-            { role: "user", content: `NEW message${author ? ` from ${author}` : ""}: "${msg}"\n\nPRIOR memory:\n${evidence}\n\nJSON:` },
-          ],
-          temperature: 0.1,
-          max_tokens: 400,
-        }),
-        signal: AbortSignal.timeout(20000),
-      });
-      if (res.status === 429 && attempt === 1) {
-        await new Promise((r) => setTimeout(r, 1500)); // brief pause, then hit the 8B bucket
-        continue;
-      }
-      if (!res.ok) throw new Error(`guard ${res.status}`);
-      const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-      return extractAlert(data.choices?.[0]?.message?.content ?? "").alert;
-    } catch (err) {
-      if (attempt === 1) {
-        await new Promise((r) => setTimeout(r, 1500));
-        continue;
-      }
-      console.error("[guard] fallback check failed:", err instanceof Error ? err.message : err);
-      return null;
-    }
-  }
-  return null;
+  const content = await chatComplete(
+    [
+      { role: "system", content: SYSTEM },
+      { role: "user", content: `NEW message${author ? ` from ${author}` : ""}: "${msg}"\n\nPRIOR memory:\n${evidence}\n\nJSON:` },
+    ],
+    { temperature: 0.1, maxTokens: 400, timeoutMs: 20000 },
+  );
+  if (!content) return null;
+  return extractAlert(content).alert;
 }

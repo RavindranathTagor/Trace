@@ -7,11 +7,13 @@
   "scripts": {
     "discord": "node --env-file=.env discord-bot.mjs",
     "backfill": "node --env-file=.env discord-backfill.mjs",
-    "teams": "node --env-file=.env teams/teams-bot.mjs"
+    "teams": "node --env-file=.env teams/teams-bot.mjs",
+    "brain-mcp": "node brain-mcp.mjs"
   },
   "dependencies": {
-    "discord.js": "^14.16.3",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "botbuilder": "^4.23.1",
+    "discord.js": "^14.16.3",
     "restify": "^11.1.0"
   }
 }

@@ -170,7 +170,9 @@ function VoiceInner({ onHighlight, graphNodes }: VoiceAgentProps) {
           {activity.map((e) => (
             <div key={e.id} className="rounded-lg p-2 text-xs" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }}>
               <div className="flex items-center gap-1.5 text-accent">
-                <span>🔍</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-3.5 w-3.5 shrink-0" aria-hidden>
+                  <circle cx="11" cy="11" r="6" /><path d="m20 20-3.5-3.5" />
+                </svg>
                 <span className="truncate">{e.q}</span>
               </div>
               <div className="mt-1 text-dim">

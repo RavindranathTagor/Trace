@@ -1,0 +1,273 @@
+{
+  "fps": 30,
+  "totalSec": 160.24,
+  "totalFrames": 4807,
+  "coldOpen": 9,
+  "lines": [
+    {
+      "id": "n01",
+      "beat": 1,
+      "text": "That's Trace — and it is not a chatbot you query.",
+      "start": 9,
+      "dur": 3.07,
+      "startFrame": 270,
+      "durFrames": 92
+    },
+    {
+      "id": "n02",
+      "beat": 1,
+      "text": "It's an agent that watches your team, and speaks up the second you contradict yourselves.",
+      "start": 12.82,
+      "dur": 4.64,
+      "startFrame": 384,
+      "durFrames": 139
+    },
+    {
+      "id": "n03",
+      "beat": 1,
+      "text": "Observe. Remember. Reason. Detect. Guard. Learn.",
+      "start": 18.21,
+      "dur": 2.97,
+      "startFrame": 546,
+      "durFrames": 89
+    },
+    {
+      "id": "n04",
+      "beat": 2,
+      "text": "Here's a real engineering team — Sandesh, Ravindra, Pushpa and Ashwini — shipping fast across Slack and Discord.",
+      "start": 23.03,
+      "dur": 6.69,
+      "startFrame": 691,
+      "durFrames": 201
+    },
+    {
+      "id": "n05",
+      "beat": 2,
+      "text": "Nobody is querying anything. Trace is simply watching.",
+      "start": 30.47,
+      "dur": 2.79,
+      "startFrame": 914,
+      "durFrames": 84
+    },
+    {
+      "id": "n06",
+      "beat": 3,
+      "text": "Sandesh reaches for MongoDB on the new billing service. But months ago, Ravindra standardized every new service on PostgreSQL. Trace catches it instantly — cited, dated, and owned.",
+      "start": 35.1,
+      "dur": 12.17,
+      "startFrame": 1053,
+      "durFrames": 365
+    },
+    {
+      "id": "n07",
+      "beat": 4,
+      "text": "Then Sandesh pushes on-prem for a big customer. But the roadmap said cloud-only. Trace flags the reversal, and loops in Ashwini.",
+      "start": 49.12,
+      "dur": 9.52,
+      "startFrame": 1474,
+      "durFrames": 286
+    },
+    {
+      "id": "n08",
+      "beat": 5,
+      "text": "Pushpa starts a retry queue — one that Ravindra already shipped in platform-core. Duplicate work, caught before a day is wasted.",
+      "start": 60.49,
+      "dur": 7.11,
+      "startFrame": 1815,
+      "durFrames": 213
+    },
+    {
+      "id": "n09",
+      "beat": 6,
+      "text": "And when you do want to ask, it answers — with citations.",
+      "start": 69.45,
+      "dur": 3.3,
+      "startFrame": 2083,
+      "durFrames": 99
+    },
+    {
+      "id": "n10",
+      "beat": 6,
+      "text": "What did we decide about our database? It traces straight back to Ravindra's Q1 call.",
+      "start": 73.49,
+      "dur": 4.37,
+      "startFrame": 2205,
+      "durFrames": 131
+    },
+    {
+      "id": "n11",
+      "beat": 7,
+      "text": "And when there is nothing to say, it says nothing.",
+      "start": 79.71,
+      "dur": 2.74,
+      "startFrame": 2391,
+      "durFrames": 82
+    },
+    {
+      "id": "n12",
+      "beat": 8,
+      "text": "Underneath is one Cognee temporal knowledge graph.",
+      "start": 84.3,
+      "dur": 2.83,
+      "startFrame": 2529,
+      "durFrames": 85
+    },
+    {
+      "id": "n13",
+      "beat": 8,
+      "text": "When you drift, it walks the graph back to the exact decision, and pulls it into the light.",
+      "start": 87.88,
+      "dur": 5.43,
+      "startFrame": 2636,
+      "durFrames": 163
+    },
+    {
+      "id": "n14",
+      "beat": 8,
+      "text": "One graph-completion call retrieves the prior decision and judges the contradiction, in a single hop.",
+      "start": 94.07,
+      "dur": 5.02,
+      "startFrame": 2822,
+      "durFrames": 150
+    },
+    {
+      "id": "n15",
+      "beat": 9,
+      "text": "The money shot. A pull request migrates billing to MongoDB. Trace comments on the pull request itself, citing Ravindra's call. Decided in Slack — enforced on GitHub.",
+      "start": 100.93,
+      "dur": 10.63,
+      "startFrame": 3028,
+      "durFrames": 319
+    },
+    {
+      "id": "n16",
+      "beat": 10,
+      "text": "Here's the twist. In 2026, your code is written by a whole fleet of A-I agents that forget.",
+      "start": 113.42,
+      "dur": 5.2,
+      "startFrame": 3403,
+      "durFrames": 156
+    },
+    {
+      "id": "n17",
+      "beat": 10,
+      "text": "So before Cursor writes a line, it asks Trace: has the team already decided this? Postgres. Decided by Ravindra. Mongo, rejected. It corrects itself.",
+      "start": 119.37,
+      "dur": 12.17,
+      "startFrame": 3581,
+      "durFrames": 365
+    },
+    {
+      "id": "n18",
+      "beat": 10,
+      "text": "One endpoint. Every agent. The same company brain.",
+      "start": 132.29,
+      "dur": 2.32,
+      "startFrame": 3969,
+      "durFrames": 70
+    },
+    {
+      "id": "n19",
+      "beat": 11,
+      "text": "And it watches the people, not just the code. Authentication is owned by Ravindra alone — and he is on leave next month.",
+      "start": 136.46,
+      "dur": 7.43,
+      "startFrame": 4094,
+      "durFrames": 223
+    },
+    {
+      "id": "n20",
+      "beat": 11,
+      "text": "Ask what breaks if he is out, and every consequence is cited to a real message.",
+      "start": 144.64,
+      "dur": 4.5,
+      "startFrame": 4339,
+      "durFrames": 135
+    },
+    {
+      "id": "n21",
+      "beat": 12,
+      "text": "Trace. It observes, remembers, reasons — and it acts. Nobody has to ask.",
+      "start": 150.99,
+      "dur": 4.18,
+      "startFrame": 4530,
+      "durFrames": 125
+    },
+    {
+      "id": "n22",
+      "beat": 12,
+      "text": "Your team's memory — with a pulse.",
+      "start": 155.92,
+      "dur": 1.76,
+      "startFrame": 4678,
+      "durFrames": 53
+    }
+  ],
+  "beats": [
+    {
+      "beat": 0,
+      "start": 0,
+      "end": 9
+    },
+    {
+      "beat": 1,
+      "start": 9,
+      "end": 21.18
+    },
+    {
+      "beat": 2,
+      "start": 23.03,
+      "end": 33.26
+    },
+    {
+      "beat": 3,
+      "start": 35.1,
+      "end": 47.27
+    },
+    {
+      "beat": 4,
+      "start": 49.12,
+      "end": 58.64
+    },
+    {
+      "beat": 5,
+      "start": 60.49,
+      "end": 67.6
+    },
+    {
+      "beat": 6,
+      "start": 69.45,
+      "end": 77.86
+    },
+    {
+      "beat": 7,
+      "start": 79.71,
+      "end": 82.45
+    },
+    {
+      "beat": 8,
+      "start": 84.3,
+      "end": 99.09
+    },
+    {
+      "beat": 9,
+      "start": 100.93,
+      "end": 111.56
+    },
+    {
+      "beat": 10,
+      "start": 113.42,
+      "end": 134.61
+    },
+    {
+      "beat": 11,
+      "start": 136.46,
+      "end": 149.14
+    },
+    {
+      "beat": 12,
+      "start": 150.99,
+      "end": 160.24
+    }
+  ]
+}

@@ -23,12 +23,27 @@ export const config = {
     // after a cooldown. Empty (or equal to baseUrl) disables failover.
     fallbackUrl: process.env.COGNEE_FALLBACK_BASE_URL || "",
   },
-  // Free Groq (OpenAI-compatible) — used only for the honest "Stateless AI"
-  // baseline (no memory) panel. Same free key as Cognee's LLM.
+  // ── LLM fallback chain (all OpenAI-compatible /chat/completions) ──────────
+  // Primary: Groq (fast, free). Used for the "Stateless AI" baseline panel AND as
+  // the deep fallback judge/composer when Cognee's own LLM is unavailable.
   baseline: {
     apiKey: process.env.GROQ_API_KEY || "",
     model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
     baseUrl: process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1",
+  },
+  // Fallback: Google Gemini via its OpenAI-compatible endpoint. Kicks in when Groq
+  // rate-limits (429) or errors, so the agent keeps working under load.
+  google: {
+    apiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || "",
+    model: process.env.GOOGLE_MODEL || "gemini-2.0-flash",
+    baseUrl: process.env.GOOGLE_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai",
+  },
+  // Offline: local Ollama (no key, no rate limit). Last-resort so the app never goes
+  // fully dark on LLM. Enabled by default; set OLLAMA_ENABLED=false to drop it.
+  ollama: {
+    enabled: process.env.OLLAMA_ENABLED !== "false",
+    model: process.env.OLLAMA_MODEL || "qwen2.5:7b",
+    baseUrl: process.env.OLLAMA_BASE_URL || "http://localhost:11434/v1",
   },
   elevenlabs: {
     // Public agent id is safe to expose to the client; the key is not used client-side.

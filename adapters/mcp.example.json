@@ -1,0 +1,16 @@
+{
+  "//": "Trace Company-Brain MCP server. Copy the 'mcpServers' block into your agent's MCP config, then the agent can call company_brain / check_before_coding before writing code.",
+  "//_claude_code": "Save as .mcp.json in your project root (or add to ~/.claude.json).",
+  "//_cursor": "Save as .cursor/mcp.json in your project (or Cursor Settings → MCP).",
+  "//_windsurf": "Add to ~/.codeium/windsurf/mcp_config.json.",
+  "//_setup": "First run: cd adapters && npm install. Point args at the absolute path to brain-mcp.mjs if your agent's CWD differs. TRACE_BASE_URL must reach the running app.",
+  "mcpServers": {
+    "trace-company-brain": {
+      "command": "node",
+      "args": ["adapters/brain-mcp.mjs"],
+      "env": {
+        "TRACE_BASE_URL": "http://localhost:3001"
+      }
+    }
+  }
+}
