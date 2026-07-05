@@ -260,15 +260,16 @@ Connect Discord, Slack, GitHub, and Teams from the in-app **Sources** page — n
 
 ---
 
-## Roadmap — what's next
+## Roadmap — where Trace is going
 
-Trace is built to become the single memory layer every team and every agent shares:
+Trace today *catches* drift. Next, it *closes the loop* — and becomes the single memory layer every team and every agent shares:
 
-- **Microsoft Teams + Jira / Linear** — catch drift at the ticket and standup level: a Jira story that reopens a settled decision, or a Teams thread that contradicts the roadmap, flagged *before* work starts. Trace already ingests and reasons over these sources' text and attachments; native two-way connectors are next.
-- **IDE extension (VS Code / JetBrains)** — the Company Brain inline as you type, so constraints, rejected designs, and past mistakes surface in the editor — not only via MCP.
-- **Auto-drafted ADRs** — the moment a decision is made, Trace writes the Architecture Decision Record for you, cited and dated.
-- **Weekly decision digest** — a Monday-morning recap of what changed, what drifted, and what's now a bus-factor risk, delivered to your channel of choice.
-- **Org-wide brain** — one shared memory spanning every repo, channel, and team, with per-team precision tuning.
+- **Autonomous reconciliation.** Trace won't just flag a drift — it opens the fix. Catch a MongoDB PR against the Postgres standard, and Trace drafts the reconciling pull request (or the exception ADR) automatically. An agent that *acts*, not just alerts.
+- **Trace as a merge gate.** A GitHub / GitLab status check that reviews every PR against the org's full decision history, conventions, and known bugs *before* it can merge — so drift never reaches `main`.
+- **Native Microsoft Teams + Jira / Linear.** Catch drift at the ticket and standup level: a Jira story that reopens a settled decision, or a Teams thread that contradicts the roadmap, flagged before work starts.
+- **Standup Copilot.** Trace joins the meeting, transcribes, and captures decisions live — the *why* is remembered the moment it's said, and no one has to write it down.
+- **Company Brain in your IDE.** A VS Code / JetBrains extension surfacing constraints, rejected designs, and past mistakes inline as you type — not only over MCP.
+- **Org-wide brain with compounding precision.** One shared memory across every repo, channel, and team, whose accuracy climbs per-team as findings are graded.
 
 ## Contributing back to Cognee
 
