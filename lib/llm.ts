@@ -28,19 +28,40 @@ interface Provider {
   model: string;
 }
 
-/** The active provider chain (only providers that are actually configured). */
+// A provider that just rate-limited (or hard-errored) is skipped for this long so we
+// don't waste a round-trip + retry on a capped bucket on every single call. This is
+// what makes failover "on the spot": once Groq returns its daily-limit 429, every
+// subsequent call goes STRAIGHT to the next working provider (e.g. Ollama).
+const COOLDOWN_MS = 10 * 60 * 1000;
+const cooldownUntil: Record<string, number> = {};
+function coolDown(name: string) {
+  cooldownUntil[name] = Date.now() + COOLDOWN_MS;
+}
+
+/** The active provider chain (only providers that are configured AND not cooling down).
+ *  The last configured provider is always kept even if cooling — a degraded provider
+ *  beats no answer at all. */
 function providerChain(): Provider[] {
-  const chain: Provider[] = [];
+  const all: Provider[] = [];
+  // Ollama FIRST: it's local, has no rate limit, and answers on the spot. Groq's free
+  // daily token cap is easily exhausted, so trying it first just burns a round-trip on
+  // a 429. Set LLM_PREFER_OLLAMA=false to restore Groq-first.
+  const ollamaFirst = config.ollama.enabled && process.env.LLM_PREFER_OLLAMA !== "false";
+  if (ollamaFirst) {
+    all.push({ name: "ollama", baseUrl: config.ollama.baseUrl, model: config.ollama.model });
+  }
   if (config.baseline.apiKey) {
-    chain.push({ name: "groq", baseUrl: config.baseline.baseUrl, apiKey: config.baseline.apiKey, model: getModel() });
+    all.push({ name: "groq", baseUrl: config.baseline.baseUrl, apiKey: config.baseline.apiKey, model: getModel() });
   }
   if (config.google.apiKey) {
-    chain.push({ name: "google", baseUrl: config.google.baseUrl, apiKey: config.google.apiKey, model: config.google.model });
+    all.push({ name: "google", baseUrl: config.google.baseUrl, apiKey: config.google.apiKey, model: config.google.model });
   }
-  if (config.ollama.enabled) {
-    chain.push({ name: "ollama", baseUrl: config.ollama.baseUrl, model: config.ollama.model });
+  if (config.ollama.enabled && !ollamaFirst) {
+    all.push({ name: "ollama", baseUrl: config.ollama.baseUrl, model: config.ollama.model });
   }
-  return chain;
+  const now = Date.now();
+  const live = all.filter((p) => !(cooldownUntil[p.name] && now < cooldownUntil[p.name]));
+  return live.length ? live : all.slice(-1);
 }
 
 /** True if at least one LLM provider is configured (Groq key, Google key, or Ollama). */
@@ -71,12 +92,10 @@ export async function chatComplete(messages: ChatMsg[], opts: ChatOpts = {}): Pr
         });
 
         if (res.status === 429) {
-          // Rate-limited: wait out the window once, then fail over to the next
-          // provider instead of burning the capped bucket.
-          if (attempt === 1) {
-            await sleep(2500);
-            continue;
-          }
+          // Rate-limited (e.g. Groq daily token cap): DON'T burn time retrying a
+          // capped bucket — cool the provider down and fail over immediately so the
+          // next provider (Ollama) answers now, and later calls skip this one entirely.
+          coolDown(p.name);
           lastErr = new Error(`${p.name} rate-limited (429)`);
           break;
         }

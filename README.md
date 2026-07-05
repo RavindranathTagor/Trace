@@ -11,8 +11,8 @@
   </p>
 
   <p>
-    <a href="https://trace-oix4.onrender.com/"><img src="https://img.shields.io/badge/Live_App-Open-2563eb?style=for-the-badge&logo=vercel&logoColor=white" alt="Live App" /></a>
-    <a href="https://youtu.be/wUpaymjsmaw"><img src="https://img.shields.io/badge/Watch_the_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch the demo" /></a>
+    <a href="https://thetrace.me/"><img src="https://img.shields.io/badge/Live_App-Open-2563eb?style=for-the-badge&logo=vercel&logoColor=white" alt="Live App" /></a>
+    <a href="https://youtu.be/5f_USSYVek0"><img src="https://img.shields.io/badge/Watch_the_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch the demo" /></a>
   </p>
 
   <p>
@@ -24,8 +24,8 @@
   </p>
 
   <p>
-    <a href="https://trace-oix4.onrender.com/">🌐 Website</a> ·
-    <a href="https://youtu.be/wUpaymjsmaw">▶️ Demo Video</a> ·
+    <a href="https://thetrace.me/">🌐 Website</a> ·
+    <a href="https://youtu.be/5f_USSYVek0">▶️ Demo Video</a> ·
     <a href="#quickstart">🚀 Quickstart</a> ·
     <a href="#company-brain--api-for-agents">🧠 Brain API</a>
   </p>
@@ -166,6 +166,16 @@ sequenceDiagram
 
 ---
 
+## Engineered for production
+
+- **Cloud-first, self-healing.** `lib/cognee.ts` authenticates to Cognee Cloud (`X-Api-Key` + `X-Tenant-Id`) and treats it as primary; a **circuit breaker** flips to a self-hosted Cognee instance on a stall/outage, then re-probes Cloud after a cooldown. A **stale-while-revalidate** graph cache means the dashboard never blocks on a slow backend.
+- **Bounded latency, always.** Every Cognee call is wrapped in a per-request timeout with a fresh-socket retry for transient resets. The Company Brain endpoint *races* live enrichment (Cognee + open GitHub issues) against a hard deadline and falls back to the decision ledger — so an agent's pre-code call can never hang.
+- **Resilient reasoning chain.** The Guardian, briefing, and answer composition run through an LLM failover chain (Cognee's managed model → Groq → Google → local Ollama) with a **per-provider cooldown** on rate limits, so a single provider's 429 never breaks a catch.
+- **Precision-first, and it learns.** The Guardian only fires on a cited, high-confidence conflict; the confirm/dismiss loop writes graded findings back into memory, reinforces the real ones, and suppresses dismissed ones.
+- **Safe by construction.** UI and integrations live in one long-lived Node server (Docker) with secrets server-side; webhooks are HMAC-verified; and forgotten/confidential terms are redacted across every surface — graph, answers, briefings, and the Brain API.
+
+---
+
 ## Company Brain — API for agents
 
 `GET /api/brain/context?topic=<area>&format=json|md|rules&target=cursor|claude|copilot|aider|agents`
@@ -174,7 +184,7 @@ Returns the pre-code context pack — architecture constraints, conventions, pas
 
 ```bash
 # Live JSON an agent can consume before writing code
-curl "https://trace-oix4.onrender.com/api/brain/context?topic=database"
+curl "https://thetrace.me/api/brain/context?topic=database"
 
 # Generate rules files the whole team's agents share
 npm run brain:rules      # writes .cursorrules · CLAUDE.md · AGENTS.md · copilot-instructions.md · CONVENTIONS.md
@@ -250,10 +260,26 @@ Connect Discord, Slack, GitHub, and Teams from the in-app **Sources** page — n
 
 ---
 
+## Roadmap — what's next
+
+Trace is built to become the single memory layer every team and every agent shares:
+
+- **Microsoft Teams + Jira / Linear** — catch drift at the ticket and standup level: a Jira story that reopens a settled decision, or a Teams thread that contradicts the roadmap, flagged *before* work starts. Trace already ingests and reasons over these sources' text and attachments; native two-way connectors are next.
+- **IDE extension (VS Code / JetBrains)** — the Company Brain inline as you type, so constraints, rejected designs, and past mistakes surface in the editor — not only via MCP.
+- **Auto-drafted ADRs** — the moment a decision is made, Trace writes the Architecture Decision Record for you, cited and dated.
+- **Weekly decision digest** — a Monday-morning recap of what changed, what drifted, and what's now a bus-factor risk, delivered to your channel of choice.
+- **Org-wide brain** — one shared memory spanning every repo, channel, and team, with per-team precision tuning.
+
+## Contributing back to Cognee
+
+Trace pushes Cognee hard in production, and we're preparing contributions back to the project: a **hardened, resilient client pattern** (per-request timeouts + fresh-socket retry + circuit-breaker failover between managed and self-hosted), a **"temporal decision graph" cookbook** example, and field notes on running `cognify` reliably under sustained load. Cognee's temporal knowledge graph is what makes Trace possible — huge thanks to the team and community.
+
+---
+
 <div align="center">
   <br />
-  <a href="https://trace-oix4.onrender.com/"><strong>🌐 Try Trace</strong></a> &nbsp;·&nbsp;
-  <a href="https://youtu.be/wUpaymjsmaw"><strong>▶️ Watch the 3-min demo</strong></a>
+  <a href="https://thetrace.me/"><strong>🌐 Try Trace</strong></a> &nbsp;·&nbsp;
+  <a href="https://youtu.be/5f_USSYVek0"><strong>▶️ Watch the 3-min demo</strong></a>
   <br /><br />
   <sub><strong>Trace</strong> — because the most expensive bugs are the decisions your team already made, and forgot.</sub>
 </div>

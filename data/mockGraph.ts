@@ -1,8 +1,10 @@
 import type { GraphData, GraphNode, GraphEdge, RecallResult } from "@/lib/types";
 
-// A hand-built decision graph mirroring data/sampleMeetings.ts. Used as the
-// offline fallback so the UI (and the demo) works before Cognee is wired, and
-// if the live engine ever hiccups mid-demo.
+// A hand-built decision graph mirroring the team's established decisions (see
+// data/demoCorpus.ts / scripts/seed-demo.mjs). Used as the offline fallback so the
+// UI (and the demo) keeps working before Cognee is wired, and if the live engine
+// hiccups mid-demo. Cast: Ravindra (platform/infra), Ashwini (PM), Sandesh
+// (billing), Pushpa (payments).
 
 const N = (
   id: string,
@@ -19,72 +21,69 @@ const E = (source: string, target: string, label: string): GraphEdge => ({
 
 const nodes: GraphNode[] = [
   // People
-  N("p-maya", "Maya (CEO)", "Person"),
-  N("p-raj", "Raj (Eng Lead)", "Person"),
-  N("p-sarah", "Sarah (PM)", "Person"),
-  N("p-priya", "Priya (Sales)", "Person"),
-  N("p-teddy", "Teddy (Infra)", "Person"),
-  // Projects
-  N("proj-selfserve", "Self-Serve Product", "Project"),
-  N("proj-atlas", "Project Atlas", "Project", { confidential: true }),
-  // Decisions
-  N("d-pricing-usage", "Usage-based pricing", "Decision", { date: "2026-01-12", status: "superseded" }),
-  N("d-pricing-flat", "Flat-tier pricing", "Decision", { date: "2026-03-09", status: "current" }),
-  N("d-arch-postgres", "Self-managed Postgres", "Decision", { date: "2026-02-04", status: "superseded" }),
-  N("d-arch-neon", "Managed Neon Postgres", "Decision", { date: "2026-04-07", status: "current" }),
-  N("d-atlas", "Explore acquisition (Atlas)", "Decision", { date: "2026-03-23", confidential: true }),
+  N("p-ravindra", "Ravindra (Platform)", "Person"),
+  N("p-ashwini", "Ashwini (PM)", "Person"),
+  N("p-sandesh", "Sandesh (Billing)", "Person"),
+  N("p-pushpa", "Pushpa (Payments)", "Person"),
+  // Areas / projects
+  N("proj-platform", "Platform Core", "Project"),
+  N("proj-payments", "Payments Service", "Project"),
+  N("proj-billing", "Billing Service", "Project"),
+  N("proj-auth", "Authentication", "Project"),
+  // Established decisions (current)
+  N("d-postgres", "Standardize on PostgreSQL", "Decision", { date: "2026-01-15", status: "current" }),
+  N("d-noonprem", "No on-prem this year (cloud-only)", "Decision", { date: "2026-01-15", status: "current" }),
+  N("d-retryqueue", "Generic retry queue in platform-core", "Decision", { date: "2026-01-22", status: "current" }),
+  // Conflicting / duplicate moves (what the Guardian catches)
+  N("d-mongo", "Migrate billing to MongoDB", "Decision", { date: "2026-04-18", status: "at-risk" }),
+  N("d-onprem-acme", "Build on-prem support for Acme", "Decision", { date: "2026-04-18", status: "at-risk" }),
+  N("d-pay-retry", "Retry queue for payments service", "Decision", { date: "2026-04-20", status: "at-risk" }),
   // Reasons
-  N("r-barrier", "Lower barrier for devs", "Reason"),
-  N("r-churn", "Churn 9% — unpredictable bills", "Reason"),
-  N("r-control", "Full control, no lock-in", "Reason"),
-  N("r-burden", "Ops/on-call burden too high", "Reason"),
-  // Action items
-  N("a-pricingpage", "Ship pricing page", "ActionItem", { owner: "Sarah", due: "2026-01-26", status: "done" }),
-  N("a-metering", "Build usage metering", "ActionItem", { owner: "Raj", due: "2026-02-02", status: "done" }),
-  N("a-pgmigration", "Self-managed Postgres migration", "ActionItem", { owner: "Teddy", due: "2026-02-20", status: "overdue" }),
-  N("a-vpc", "Unblock VPC networking", "ActionItem", { owner: "Teddy", due: "2026-02-25", status: "overdue" }),
-  N("a-flatpage", "Rebuild pricing page (flat)", "ActionItem", { owner: "Sarah", due: "2026-03-20", status: "done" }),
-  N("a-neon", "Migrate to managed Neon", "ActionItem", { owner: "Teddy", due: "2026-04-21", status: "blocked" }),
-  N("a-backfill", "Finish Neon data backfill", "ActionItem", { owner: "Teddy", due: "2026-04-28", status: "blocked" }),
-  N("a-atlas-dd", "Atlas diligence doc", "ActionItem", { owner: "Maya", due: "2026-04-01", status: "open", confidential: true }),
-  // Blockers
-  N("b-vpc", "VPC networking issue", "Blocker"),
-  N("b-backfill", "Data backfill", "Blocker"),
-  N("b-vms", "Decommission old VMs", "Blocker"),
+  N("r-onedb", "One database to operate", "Reason"),
+  N("r-smallteam", "Keep the team small", "Reason"),
+  N("r-reuse", "Reuse across all services", "Reason"),
+  N("r-flex", "Schema flexibility", "Reason"),
+  N("r-acme", "Big customer Acme needs it", "Reason"),
+  // Ownership / action items
+  N("a-auth", "Owns authentication end-to-end", "ActionItem", { owner: "Ravindra", status: "at-risk" }),
+  N("a-payments", "Owns payments service", "ActionItem", { owner: "Pushpa", status: "open" }),
+  N("a-roadmap", "Q1 roadmap: reliability + analytics", "ActionItem", { owner: "Ashwini", status: "open" }),
+  // Risk
+  N("b-leave", "Ravindra on leave next month", "Blocker"),
 ];
 
 const edges: GraphEdge[] = [
-  // supersession (temporal)
-  E("d-pricing-flat", "d-pricing-usage", "supersedes"),
-  E("d-arch-neon", "d-arch-postgres", "supersedes"),
+  // who made the established decisions
+  E("p-ravindra", "d-postgres", "decided"),
+  E("p-ravindra", "d-noonprem", "decided"),
+  E("p-ravindra", "d-retryqueue", "decided"),
+  E("p-ashwini", "d-noonprem", "argued_for"),
   // reasons
-  E("d-pricing-usage", "r-barrier", "because"),
-  E("d-pricing-flat", "r-churn", "because"),
-  E("d-arch-postgres", "r-control", "because"),
-  E("d-arch-neon", "r-burden", "because"),
-  // decisions about the product / atlas
-  E("d-pricing-usage", "proj-selfserve", "about"),
-  E("d-pricing-flat", "proj-selfserve", "about"),
-  E("d-arch-postgres", "proj-selfserve", "about"),
-  E("d-arch-neon", "proj-selfserve", "about"),
-  E("d-atlas", "proj-atlas", "about"),
-  E("a-atlas-dd", "proj-atlas", "about"),
+  E("d-postgres", "r-onedb", "because"),
+  E("d-noonprem", "r-smallteam", "because"),
+  E("d-retryqueue", "r-reuse", "because"),
+  E("d-mongo", "r-flex", "because"),
+  E("d-onprem-acme", "r-acme", "because"),
+  // the catches: conflicts + duplicate
+  E("d-mongo", "d-postgres", "conflicts_with"),
+  E("d-onprem-acme", "d-noonprem", "conflicts_with"),
+  E("d-pay-retry", "d-retryqueue", "duplicates"),
+  // who proposed the conflicting moves
+  E("p-sandesh", "d-mongo", "proposed"),
+  E("p-sandesh", "d-onprem-acme", "proposed"),
+  E("p-pushpa", "d-pay-retry", "proposed"),
+  // decisions about which area
+  E("d-mongo", "proj-billing", "about"),
+  E("d-pay-retry", "proj-payments", "about"),
+  E("d-retryqueue", "proj-platform", "about"),
   // ownership
-  E("p-sarah", "a-pricingpage", "owns"),
-  E("p-raj", "a-metering", "owns"),
-  E("p-teddy", "a-pgmigration", "owns"),
-  E("p-teddy", "a-vpc", "owns"),
-  E("p-sarah", "a-flatpage", "owns"),
-  E("p-teddy", "a-neon", "owns"),
-  E("p-teddy", "a-backfill", "owns"),
-  E("p-maya", "a-atlas-dd", "owns"),
-  // who drove which decision
-  E("p-priya", "d-pricing-flat", "argued_for"),
-  E("p-teddy", "d-arch-postgres", "argued_for"),
-  // blockers
-  E("b-vpc", "a-pgmigration", "blocks"),
-  E("b-backfill", "a-neon", "blocks"),
-  E("b-vms", "a-neon", "blocks"),
+  E("p-ravindra", "a-auth", "owns"),
+  E("p-pushpa", "a-payments", "owns"),
+  E("p-ashwini", "a-roadmap", "owns"),
+  E("a-auth", "proj-auth", "about"),
+  E("a-payments", "proj-payments", "about"),
+  // bus-factor risk: Ravindra owns auth AND is going on leave
+  E("b-leave", "a-auth", "blocks"),
 ];
 
 export function getMockGraph(): GraphData {
@@ -102,58 +101,47 @@ interface MockAnswer {
   nodeIds: string[];
 }
 
-// Ordered MOST-SPECIFIC FIRST (mockRecall uses Array.find -> first match wins):
-// pricing-why before pricing-current; postgres/overdue/blocked before the
-// generic "changed" summary; "changed" is the catch-all and comes last.
+// Ordered MOST-SPECIFIC FIRST (mockRecall uses Array.find -> first match wins).
 const ANSWERS: MockAnswer[] = [
   {
-    match: (q) => q.includes("pricing") && (q.includes("why") || q.includes("decide") || q.includes("decision")),
+    match: (q) => q.includes("mongo") || q.includes("database") || q.includes("postgres") || q.includes("db "),
     answer:
-      "Pricing went through two decisions. Jan 12: usage-based ($0.10/1k calls) to lower the barrier for developers. Mar 9: reversed to flat tiers because churn hit 9% and customers wanted predictable bills. The flat-tier decision is current and supersedes the usage-based one.",
+      "The team standardized on PostgreSQL for all new services — no MongoDB for new services — to keep one database to operate. Ravindra set that decision. Moving the billing service to MongoDB would reverse it.",
     context:
-      "Decision[Usage-based, 2026-01-12] -because-> Reason[Lower barrier]; Decision[Flat-tier, 2026-03-09] -supersedes-> Usage-based; -because-> Reason[Churn 9%].",
-    nodeIds: ["d-pricing-flat", "d-pricing-usage", "r-churn", "r-barrier"],
+      "Decision[Standardize on PostgreSQL, 2026-01-15] -because-> Reason[One database to operate]; Ravindra -decided-> it. Decision[Migrate billing to MongoDB] -conflicts_with-> PostgreSQL standard.",
+    nodeIds: ["d-postgres", "r-onedb", "p-ravindra", "d-mongo"],
   },
   {
-    match: (q) => q.includes("pricing") && (q.includes("current") || q.includes("now")),
+    match: (q) => q.includes("on-prem") || q.includes("on prem") || q.includes("onprem") || q.includes("acme") || q.includes("self-host"),
     answer:
-      "Your current pricing is flat-tier (Starter $49, Pro $199, Enterprise custom), decided on Mar 9, 2026. It superseded the original usage-based pricing from the Q1 kickoff. The change was made to reduce churn after three customers left citing unpredictable usage-based bills.",
+      "On-prem is out of scope. Ravindra decided cloud-only this year to keep the team small, and Ashwini's Q1 roadmap explicitly lists on-prem as out of scope. Building on-prem for Acme would reverse that.",
     context:
-      "Decision[Flat-tier pricing, 2026-03-09] -supersedes-> Decision[Usage-based pricing, 2026-01-12]; -because-> Reason[Churn 9% — unpredictable bills]; Priya -argued_for-> Flat-tier.",
-    nodeIds: ["d-pricing-flat", "d-pricing-usage", "r-churn", "p-priya"],
+      "Decision[No on-prem this year, 2026-01-15] -because-> Reason[Keep the team small]; Ashwini roadmap: on-prem out of scope. Decision[Build on-prem for Acme] -conflicts_with-> it.",
+    nodeIds: ["d-noonprem", "r-smallteam", "p-ashwini", "d-onprem-acme"],
   },
   {
-    match: (q) =>
-      q.includes("postgres") || q.includes("migration") || q.includes("neon") || q.includes("architecture") || q.includes("drop"),
+    match: (q) => q.includes("retry") || q.includes("queue"),
     answer:
-      "You dropped self-managed Postgres on Apr 7 and moved to managed Neon. The self-hosted approach (chosen Feb 4 for control) caused two outages and three weeks of on-call pain, so the operational burden outweighed the control benefits. Teddy owns the Neon migration and is still blocked on the data backfill.",
+      "There is already a generic retry queue in platform-core (Ravindra, PR #412) meant for all services to reuse. Building a separate retry queue for the payments service would duplicate it — reuse platform-core instead.",
     context:
-      "Decision[Managed Neon, 2026-04-07] -supersedes-> Decision[Self-managed Postgres, 2026-02-04]; -because-> Reason[Ops burden too high]; Teddy -owns-> Neon migration (blocked).",
-    nodeIds: ["d-arch-neon", "d-arch-postgres", "r-burden", "p-teddy", "a-neon"],
+      "Decision[Generic retry queue in platform-core, 2026-01-22] -because-> Reason[Reuse across all services]. Decision[Retry queue for payments] -duplicates-> it.",
+    nodeIds: ["d-retryqueue", "r-reuse", "p-ravindra", "d-pay-retry"],
   },
   {
-    match: (q) => q.includes("overdue") || q.includes("assigned") || q.includes("my action") || q.includes("on me"),
+    match: (q) => q.includes("auth") || q.includes("who owns") || q.includes("ownership") || q.includes("leave") || q.includes("bus"),
     answer:
-      "Overdue or blocked action items: Teddy has the Postgres migration (due Feb 20, overdue), the VPC unblock (due Feb 25, overdue), the Neon migration (due Apr 21, blocked) and the Neon backfill (due Apr 28, blocked). Teddy is the bottleneck on infrastructure.",
+      "Ravindra owns authentication end-to-end — all auth changes go through him. Heads up: he's on leave all of next month, so auth is a single-owner / bus-factor risk while he's out. Pushpa owns the payments service.",
     context:
-      "Teddy -owns-> [Postgres migration (overdue), VPC unblock (overdue), Neon migration (blocked), Neon backfill (blocked)].",
-    nodeIds: ["p-teddy", "a-pgmigration", "a-vpc", "a-neon", "a-backfill"],
+      "Ravindra -owns-> Authentication (at-risk); Ravindra on leave next month -blocks-> auth ownership. Pushpa -owns-> Payments.",
+    nodeIds: ["a-auth", "p-ravindra", "b-leave", "a-payments", "p-pushpa"],
   },
   {
-    match: (q) => q.includes("blocked") || q.includes("blocker") || q.includes("bottleneck"),
+    match: (q) => q.includes("changed") || q.includes("drift") || q.includes("conflict") || q.includes("reverse"),
     answer:
-      "Teddy owns the most blocked items. The Neon migration is blocked by the data backfill and by decommissioning the old VMs; the original Postgres migration was blocked by a VPC networking issue.",
+      "Three recent moves conflict with established decisions: migrating billing to MongoDB (vs the PostgreSQL standard), building on-prem for Acme (vs cloud-only), and a payments retry queue (duplicates the platform-core queue).",
     context:
-      "Teddy -owns-> Neon migration <-blocks- [Data backfill, Decommission VMs]; Postgres migration <-blocks- VPC networking issue.",
-    nodeIds: ["p-teddy", "a-neon", "b-backfill", "b-vms", "a-pgmigration", "b-vpc"],
-  },
-  {
-    match: (q) => q.includes("changed") || q.includes("since q1") || q.includes("since january"),
-    answer:
-      "Since Q1, two decisions were reversed. Pricing changed from usage-based (Jan) to flat-tier (Mar) due to churn. Architecture changed from self-managed Postgres (Feb) to managed Neon (Apr) because the on-call burden was too high.",
-    context:
-      "Flat-tier -supersedes-> Usage-based; Managed Neon -supersedes-> Self-managed Postgres.",
-    nodeIds: ["d-pricing-flat", "d-pricing-usage", "d-arch-neon", "d-arch-postgres"],
+      "MongoDB -conflicts_with-> PostgreSQL standard; On-prem for Acme -conflicts_with-> cloud-only; Payments retry queue -duplicates-> platform-core retry queue.",
+    nodeIds: ["d-mongo", "d-postgres", "d-onprem-acme", "d-noonprem", "d-pay-retry", "d-retryqueue"],
   },
 ];
 
@@ -165,7 +153,7 @@ export function mockRecall(query: string): RecallResult {
   }
   return {
     answer:
-      "I searched the team's decision memory but didn't find a confident match. Try asking about pricing, the Postgres/Neon migration, what changed since Q1, or overdue action items.",
+      "I searched the team's decision memory but didn't find a confident match. Try asking about the database (Postgres) standard, on-prem, the platform retry queue, or who owns auth.",
     context: "",
     nodeIds: [],
     source: "mock",

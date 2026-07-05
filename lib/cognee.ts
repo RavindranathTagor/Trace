@@ -495,7 +495,10 @@ function extractChunkText(item: unknown): string {
 export async function getGraph(): Promise<GraphData> {
   const id = await datasetId();
   if (!id) return { nodes: [], edges: [] };
-  const res = await api(`/datasets/${id}/graph`, { method: "GET" }, 15000);
+  // Cloud can take 20-40s to serialize a large graph while healthy-but-busy. The
+  // route caches the result (stale-while-revalidate), so a generous cap here only
+  // affects the very first warm fetch — after that every poll is served instantly.
+  const res = await api(`/datasets/${id}/graph`, { method: "GET" }, 45000);
   await expectOk(res, "getGraph");
   const raw = (await res.json()) as {
     nodes?: Array<{ id: string; label?: string; type?: string; properties?: Record<string, unknown> }>;
@@ -542,13 +545,19 @@ export async function forgetDataset(): Promise<void> {
 const dsCache: Record<string, string> = {};
 
 async function datasetId(): Promise<string | null> {
+  // Known id → skip the (slow) /datasets list entirely and go straight to the graph.
+  // A busy Cloud tenant can take 20-25s just to list datasets; when we already know
+  // the id (set once from a successful lookup) this shaves that off every cold fetch.
+  const pinned = process.env.COGNEE_DATASET_ID?.trim();
+  if (pinned) return pinned;
   // Read AND write the cache under the same key: the backend that LAST served a
   // request (state.servedBase) is the one this call will most likely hit, and is
   // exactly the base api() will re-stamp below. Keying the read on a separate
   // "likelyBase" guess (the old bug) could miss an id already cached by name.
   if (dsCache[state.servedBase]) return dsCache[state.servedBase];
-  // callTarget adds the trailing slash for Cloud; 8s cap keeps the failover snappy.
-  const res = await api("/datasets", { method: "GET" }, 8000);
+  // callTarget adds the trailing slash for Cloud; cap generously — a busy Cloud
+  // tenant can be slow to list datasets, and the id is cached after the first hit.
+  const res = await api("/datasets", { method: "GET" }, 25000);
   if (!res.ok) return dsCache[state.servedBase] ?? null;
   const list = (await res.json()) as Array<{ id: string; name?: string }>;
   const match = Array.isArray(list) ? list.find((d) => d.name === DATASET) : null;

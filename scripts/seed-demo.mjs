@@ -34,16 +34,16 @@ if (KEY) headers["X-Api-Key"] = KEY;
 if (TENANT) headers["X-Tenant-Id"] = TENANT;
 
 const CORPUS = [
-  "priya (Q1, #eng): Decision: we are standardizing ALL new services on PostgreSQL. No more MongoDB for new services.",
-  "priya (Q1, #eng): Decision: we will NOT support on-prem deployments this year. Cloud-only, to keep the team small.",
-  "priya (Q1, #eng): I own authentication end to end. All auth changes go through me.",
-  "maya (Q1, roadmap): Q1 focus is reliability and the analytics dashboard. On-prem is explicitly out of scope.",
-  "raj (Q1, #payments): Kicked off the payments service. Priya owns auth, I own payments.",
-  "karthik (Q2, #sales): Big customer Acme needs on-prem. We should build on-prem support this quarter.",
-  "karthik (Q2, #billing): Migrating the new billing service to MongoDB for schema flexibility.",
-  "raj (Q2, #payments): I started building a retry queue for the payments service.",
-  "sam (Q2, PR #412 platform-core): Added a generic retry queue in platform-core for all services to use.",
-  "priya (Q2, #eng): Heads up, I'm on leave all of next month.",
+  "ravindra (Q1, #eng): Decision: we are standardizing ALL new services on PostgreSQL. No more MongoDB for new services.",
+  "ravindra (Q1, #eng): Decision: we will NOT support on-prem deployments this year. Cloud-only, to keep the team small.",
+  "ravindra (Q1, #eng): I own authentication end to end. All auth changes go through me.",
+  "ashwini (Q1, roadmap): Q1 focus is reliability and the analytics dashboard. On-prem is explicitly out of scope.",
+  "ravindra (Q1, PR #412 platform-core): Added a generic retry queue in platform-core for all services to use.",
+  "pushpa (Q1, #payments): Kicked off the payments service. Ravindra owns auth, I own payments.",
+  "sandesh (Q2, #sales): Big customer Acme needs on-prem. We should build on-prem support this quarter.",
+  "sandesh (Q2, #billing): Migrating the new billing service to MongoDB for schema flexibility.",
+  "pushpa (Q2, #payments): I started building a retry queue for the payments service.",
+  "ravindra (Q2, #eng): Heads up, I'm on leave all of next month.",
 ];
 
 async function post(path, body) {

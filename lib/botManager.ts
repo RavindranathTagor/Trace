@@ -67,7 +67,9 @@ function spawnChild(): { ok: boolean; error?: string } {
       // TRACE_BASE_URL is the current name; HINDSIGHT_BASE_URL kept for backward compat.
       TRACE_BASE_URL: baseUrl,
       HINDSIGHT_BASE_URL: baseUrl,
-      BACKFILL_ON_START: "true",
+      // Backfilling a channel's old history re-ingests stale messages into memory.
+      // Default on, but set BACKFILL_ON_START=false (e.g. during a clean demo) to skip it.
+      BACKFILL_ON_START: process.env.BACKFILL_ON_START ?? "true",
     },
     stdio: ["ignore", "pipe", "pipe"],
     shell: false,

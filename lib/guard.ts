@@ -13,6 +13,7 @@
 
 import { searchChunks, search, completeWithCognee } from "@/lib/cognee";
 import { chatComplete, llmAvailable } from "@/lib/llm";
+import { corpusEvidence } from "@/data/demoCorpus";
 
 export interface GuardAlert {
   kind: "drift" | "duplicate";
@@ -25,8 +26,11 @@ export interface GuardAlert {
 const SYSTEM = `You are Trace's Guardian. You are given a NEW team message and the team's PRIOR
 decisions from long-term memory. Decide if the NEW message:
 - "drift": CONTRADICTS or REVERSES a prior DECISION (e.g. prior "we standardized on Postgres",
-  new "migrating to MongoDB"), or
-- "duplicate": redoes work a prior message shows someone already did or is doing.
+  new "migrating to MongoDB"; or prior "no on-prem this year", new "let's build on-prem"), or
+- "duplicate": redoes work a prior message shows someone already did or is building — INCLUDING
+  building a service-specific version of something that already exists as a shared/generic
+  component (e.g. prior "platform-core ships ONE shared retry queue every service must reuse",
+  new "I'm building a retry queue for the payments service" -> duplicate).
 Rules:
 - Only flag a GENUINE, HIGH-CONFIDENCE contradiction/duplication grounded in a specific prior message.
 - If there is no clear conflict, return {"alert": null}. Silence is correct most of the time.
@@ -80,6 +84,11 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
   const msg = text.trim();
   if (msg.length < 12) return null;
 
+  // When the backend's completion LLM is slow (e.g. a local Ollama doing
+  // GRAPH_COMPLETION), skip step 1 and judge directly over fast retrieval + the local
+  // snapshot. Set COGNEE_SKIP_COMPLETION=true to keep the live guard snappy.
+  const skipCompletion = process.env.COGNEE_SKIP_COMPLETION === "true";
+
   // 1) PRIMARY — Cognee's managed LLM retrieves the prior decisions AND judges,
   // in a single GRAPH_COMPLETION call. The verdict instruction rides in the query
   // (works regardless of whether the backend honors a custom system prompt).
@@ -91,12 +100,14 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
     `Reply with STRICT JSON only, no prose, exactly one of:\n` +
     `{"alert": null}\n` +
     `{"alert": {"kind":"drift"|"duplicate","headline":"<=14 words","why":"the reconciliation ask","owner":"name or empty","prior":{"quote":"exact prior text","who":"","when":""}}}`;
-  try {
-    const raw = await completeWithCognee(guardQuery, SYSTEM, 8);
-    const r = extractAlert(raw);
-    if (r.found) return r.alert; // authoritative — an alert, or a deliberate silence
-  } catch (err) {
-    console.error("[guard] Cognee judge unavailable, falling back:", err instanceof Error ? err.message : err);
+  if (!skipCompletion) {
+    try {
+      const raw = await completeWithCognee(guardQuery, SYSTEM, 8);
+      const r = extractAlert(raw);
+      if (r.found) return r.alert; // authoritative — an alert, or a deliberate silence
+    } catch (err) {
+      console.error("[guard] Cognee judge unavailable, falling back:", err instanceof Error ? err.message : err);
+    }
   }
 
   // 2) FALLBACK — retrieve evidence ourselves and judge via the LLM failover chain
@@ -105,22 +116,34 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
   if (!llmAvailable()) return null;
 
   const head = msg.slice(0, 48).toLowerCase();
-  const [chunks, gctx] = await Promise.all([
-    searchChunks(msg, 8).catch(() => [] as string[]),
-    search(msg, { searchType: "GRAPH_COMPLETION", onlyContext: true, topK: 8 })
-      .then((r) => r.context || r.answer || "")
-      .catch(() => ""),
-  ]);
-  const prior = chunks.filter((p) => p.trim() && !p.toLowerCase().includes(head)).slice(0, 6);
-  if (gctx) {
-    const cleaned = gctx
-      .replace(/__node_content_start__/g, ": ")
-      .replace(/__node_content_end__/g, " ")
-      .replace(/\bNodes?:/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 1600);
-    if (cleaned.length > 20 && !cleaned.toLowerCase().includes(head)) prior.push(cleaned);
+  const prior: string[] = [];
+  // Cognee retrieval (chunks + graph context) — SKIPPED in fast mode, because on a
+  // local Ollama-backed Cognee these calls add tens of seconds. In fast mode we judge
+  // over the local snapshot alone, which is what keeps the live guard replying in ~seconds.
+  if (!skipCompletion) {
+    const [chunks, gctx] = await Promise.all([
+      searchChunks(msg, 8).catch(() => [] as string[]),
+      search(msg, { searchType: "GRAPH_COMPLETION", onlyContext: true, topK: 8 })
+        .then((r) => r.context || r.answer || "")
+        .catch(() => ""),
+    ]);
+    prior.push(...chunks.filter((p) => p.trim() && !p.toLowerCase().includes(head)).slice(0, 6));
+    if (gctx) {
+      const cleaned = gctx
+        .replace(/__node_content_start__/g, ": ")
+        .replace(/__node_content_end__/g, " ")
+        .replace(/\bNodes?:/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 1600);
+      if (cleaned.length > 20 && !cleaned.toLowerCase().includes(head)) prior.push(cleaned);
+    }
+  }
+  // Always fold in the local memory snapshot: when Cognee is unreachable/empty (a
+  // Cloud stall, or a self-host mid-cognify) this is the ONLY source of the team's
+  // prior decisions, so the Guardian can still catch drift/duplication live.
+  for (const m of corpusEvidence(msg)) {
+    if (!m.toLowerCase().includes(head) && !prior.some((p) => p.includes(m))) prior.push(m);
   }
   if (prior.length === 0) return null;
 

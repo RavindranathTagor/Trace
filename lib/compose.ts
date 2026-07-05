@@ -36,14 +36,18 @@ function looksUnhelpful(a: string): boolean {
 
 export async function composeAnswer(question: string, context: string): Promise<string> {
   // 1) PRIMARY — Cognee's managed LLM composes the answer over its own retrieval.
-  try {
-    const cogneeAnswer = await completeWithCognee(question, ANSWER_PROMPT);
-    if (cogneeAnswer && !looksUnhelpful(cogneeAnswer)) {
-      // Strip any reasoning-model <think> block just in case.
-      return cogneeAnswer.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+  // Skipped when COGNEE_SKIP_COMPLETION=true (a slow local completion LLM) — we then
+  // compose directly over the context the caller already retrieved, via Ollama.
+  if (process.env.COGNEE_SKIP_COMPLETION !== "true") {
+    try {
+      const cogneeAnswer = await completeWithCognee(question, ANSWER_PROMPT);
+      if (cogneeAnswer && !looksUnhelpful(cogneeAnswer)) {
+        // Strip any reasoning-model <think> block just in case.
+        return cogneeAnswer.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+      }
+    } catch (err) {
+      console.error("[compose] Cognee LLM unavailable, falling back:", err instanceof Error ? err.message : err);
     }
-  } catch (err) {
-    console.error("[compose] Cognee LLM unavailable, falling back:", err instanceof Error ? err.message : err);
   }
 
   // 2) FALLBACK — compose over the context we already retrieved, via the LLM

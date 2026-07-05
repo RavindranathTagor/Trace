@@ -221,7 +221,6 @@ export default function Landing() {
           <a href="#before-ai" className="hover:text-ink">For AI agents</a>
           <a href="#how" className="hover:text-ink">How it works</a>
           <a href="#brain" className="hover:text-ink">Brain API</a>
-          <a href="#live" className="hover:text-ink">Live demo</a>
         </div>
         <div className="flex items-center gap-2.5">
           <a href="#replay" className="btn hidden sm:inline-flex">See it work</a>

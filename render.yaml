@@ -15,12 +15,15 @@ services:
       - key: COGNEE_ENABLED
         value: "true"
       - key: COGNEE_DATASET
-        value: trace-demo
+        value: trace-demo-v2
       - key: COGNEE_AUTH
         value: "false"
       # Cognee Cloud host is public (not a secret) — safe to inline.
       - key: COGNEE_BASE_URL
         value: https://tenant-521d803b-ad39-4ba7-a627-9d3e72596edc.aws.cognee.ai
+      # Pinned dataset id skips the /datasets list lookup on cold fetches (not a secret).
+      - key: COGNEE_DATASET_ID
+        value: be36191d-0999-5787-bbba-8395c02cd809
       - key: NEXT_PUBLIC_ELEVENLABS_AGENT_ID
         value: agent_5701kwbnewv0fw09sa7h2r2y3sr4
       - key: GROQ_MODEL

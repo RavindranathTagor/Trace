@@ -49,6 +49,7 @@ adapters/.env
 # scratch / notes
 message.txt
 _test_ollama.txt
+.tmp/
 
 # agent rules files GENERATED from the company brain (npm run brain:rules) —
 # regenerate locally; don't commit (may encode internal constraints)

@@ -96,8 +96,11 @@ interface DriftMeta {
 }
 
 async function processDrift(m: DriftMeta) {
-  // Guard the PR against prior decisions in memory (cross-source drift).
-  const alert = await checkMessage(m.text, m.author);
+  // Guard the PR against prior decisions in memory (cross-source drift). We deliberately
+  // DON'T pass the PR author here: an architecture standard applies to everyone, but the
+  // judge tends to excuse a reversal when the author's name matches the decision's owner
+  // (e.g. the repo owner opening the PR). The catch should fire on the content regardless.
+  const alert = await checkMessage(m.text);
 
   // Record the catch so the dashboard can surface it (with PR link + author).
   if (alert) {
