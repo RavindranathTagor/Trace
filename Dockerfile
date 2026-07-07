@@ -17,10 +17,7 @@ RUN npm ci
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Always build from a clean slate — `rm -rf .next` guarantees no stale route cache is
-# reused and busts any stale Docker build-layer cache (which was pinning `/` to an old
-# prerender). The root route (/) is the marketing landing; /app is the product.
-RUN rm -rf .next && npm run build
+RUN npm run build
 
 # --- runtime ---
 FROM base AS runtime
