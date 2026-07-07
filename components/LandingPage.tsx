@@ -7,6 +7,7 @@ import ReplayMistake from "@/components/ReplayMistake";
 import { TraceMark } from "@/components/TraceMark";
 import { BrandLogo } from "@/components/BrandIcon";
 import AgenticFlow from "@/components/AgenticFlow";
+import WaitlistCTA from "@/components/WaitlistCTA";
 import {
   IconDrift, IconDuplicate, IconKnowledge, IconRobot, IconObserve, IconRemember, IconReason, IconShield,
   IconImprove, IconApi, IconGraph, IconServer, IconCloud, IconAudit, IconLock, IconCitation,
@@ -224,6 +225,7 @@ export default function Landing() {
         </div>
         <div className="flex items-center gap-2.5">
           <a href="#replay" className="btn hidden sm:inline-flex">See it work</a>
+          <a href="#waitlist" className="btn hidden sm:inline-flex">Join the beta</a>
           <Link href="/app" className="btn-primary">Try Trace</Link>
         </div>
       </nav>
@@ -279,6 +281,24 @@ export default function Landing() {
           </div>
         </div>
       </header>
+
+      {/* 1b · Validation CTA — waitlist + is-this-useful feedback */}
+      <section id="waitlist" className="border-y scroll-mt-16" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
+        <div className="mx-auto max-w-6xl px-6 py-16 text-center">
+          <p className={eyebrow}>We&apos;re validating with real teams</p>
+          <h2 className="mt-2 text-balance text-2xl font-semibold tracking-tight text-ink sm:text-[30px]">
+            Give your company a memory — and a guardian.
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-dim">
+            Trace remembers every decision your company makes, traces exactly where one went wrong, and
+            feeds that memory to the AI agents your team already uses. Join the private beta — or just tell
+            us if the idea resonates.
+          </p>
+          <div className="mt-8">
+            <WaitlistCTA source="landing-hero" />
+          </div>
+        </div>
+      </section>
 
       {/* 2 · Enterprise ROI strip */}
       <section id="why" className="mx-auto max-w-6xl scroll-mt-16 px-6 py-20">

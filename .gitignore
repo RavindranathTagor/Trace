@@ -65,3 +65,6 @@ _test_ollama.txt
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# validation capture (may contain emails) — never commit
+/data/waitlist.jsonl
