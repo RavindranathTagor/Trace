@@ -8,6 +8,7 @@ import { TraceMark } from "@/components/TraceMark";
 import { BrandLogo } from "@/components/BrandIcon";
 import AgenticFlow from "@/components/AgenticFlow";
 import WaitlistCTA from "@/components/WaitlistCTA";
+import VideoShowcase from "@/components/VideoShowcase";
 import {
   IconDrift, IconDuplicate, IconKnowledge, IconRobot, IconObserve, IconRemember, IconReason, IconShield,
   IconImprove, IconApi, IconGraph, IconServer, IconCloud, IconAudit, IconLock, IconCitation,
@@ -281,6 +282,17 @@ export default function Landing() {
           </div>
         </div>
       </header>
+
+      {/* 1a · Demo video */}
+      <section id="demo" className="mx-auto max-w-6xl scroll-mt-16 px-6 pt-16 pb-4">
+        <Reveal className="text-center">
+          <p className={eyebrow}>See it in action</p>
+          <h2 className={h2}>Watch Trace catch a decision going wrong — live</h2>
+        </Reveal>
+        <Reveal delay={120} className="mt-8">
+          <VideoShowcase />
+        </Reveal>
+      </section>
 
       {/* 1b · Validation CTA — waitlist + is-this-useful feedback */}
       <section id="waitlist" className="border-y scroll-mt-16" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
