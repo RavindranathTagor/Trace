@@ -22,12 +22,30 @@ interface Entry {
   ts: string;
 }
 
-async function readEntries(): Promise<Entry[]> {
+// In-memory aggregate so we don't read+parse the whole file on every request.
+// Lazily hydrated from disk once per process; then every POST/GET is O(1).
+interface Counts { count: number; up: number; down: number; loaded: boolean }
+const g = globalThis as unknown as { __traceWaitlist?: Counts };
+const counts = (g.__traceWaitlist ??= { count: 0, up: 0, down: 0, loaded: false });
+
+async function ensureLoaded(): Promise<void> {
+  if (counts.loaded) return;
+  counts.loaded = true; // set before awaiting so concurrent requests don't double-count
   try {
     const raw = await readFile(FILE, "utf8");
-    return raw.split("\n").filter(Boolean).map((l) => JSON.parse(l) as Entry);
+    for (const line of raw.split("\n")) {
+      if (!line.trim()) continue;
+      try {
+        const e = JSON.parse(line) as Entry;
+        if (e.email) counts.count++;
+        if (e.vote === "up") counts.up++;
+        else if (e.vote === "down") counts.down++;
+      } catch {
+        /* skip malformed line */
+      }
+    }
   } catch {
-    return [];
+    /* no file yet */
   }
 }
 
@@ -54,6 +72,7 @@ async function notify(e: Entry) {
 }
 
 export async function POST(req: NextRequest) {
+  await ensureLoaded();
   const body = (await req.json().catch(() => ({}))) as Partial<Entry>;
   const email = typeof body.email === "string" ? body.email.trim().slice(0, 200) : undefined;
   const vote = body.vote === "up" || body.vote === "down" ? body.vote : undefined;
@@ -75,15 +94,14 @@ export async function POST(req: NextRequest) {
   }
   void notify(entry);
 
-  const entries = await readEntries();
-  return NextResponse.json({ ok: true, count: entries.filter((e) => e.email).length });
+  if (email) counts.count++;
+  if (vote === "up") counts.up++;
+  else if (vote === "down") counts.down++;
+
+  return NextResponse.json({ ok: true, count: counts.count });
 }
 
 export async function GET() {
-  const entries = await readEntries();
-  return NextResponse.json({
-    count: entries.filter((e) => e.email).length,
-    up: entries.filter((e) => e.vote === "up").length,
-    down: entries.filter((e) => e.vote === "down").length,
-  });
+  await ensureLoaded();
+  return NextResponse.json({ count: counts.count, up: counts.up, down: counts.down });
 }

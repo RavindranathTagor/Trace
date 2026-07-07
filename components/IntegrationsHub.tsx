@@ -93,7 +93,11 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
   }, []);
   useEffect(() => {
     load();
-    const t = setInterval(load, 4000);
+    // Poll less often and pause when the tab is hidden: /api/integrations also runs a
+    // bot-autostart check, so a 4s always-on poll was ~15 needless calls/min per tab.
+    const t = setInterval(() => {
+      if (typeof document === "undefined" || !document.hidden) load();
+    }, 10000);
     return () => clearInterval(t);
   }, [load]);
 

@@ -32,7 +32,10 @@ export default function BriefingDeliver() {
   }, []);
   useEffect(() => {
     load();
-    const t = setInterval(load, 8000);
+    // Connection status barely changes; poll slower and pause on a hidden tab.
+    const t = setInterval(() => {
+      if (typeof document === "undefined" || !document.hidden) load();
+    }, 15000);
     return () => clearInterval(t);
   }, [load]);
 

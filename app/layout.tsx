@@ -13,10 +13,33 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const SITE_URL = "https://thetrace.me";
+const TITLE = "Trace, a Company Brain and Guardian for your team";
+const DESCRIPTION =
+  "Trace gives your company a shared memory: it remembers every decision, warns the moment new work reverses or duplicates one, and feeds that memory to the AI agents your team uses. Powered by a Cognee temporal knowledge graph.";
+
 export const metadata: Metadata = {
-  title: "Trace, catch what your team forgot it decided",
-  description:
-    "Trace watches your team's activity and surfaces what you haven't realized: decisions that contradict past decisions, duplicate work across teams, and ownership gaps. Powered by a Cognee temporal memory graph.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  applicationName: "Trace",
+  keywords: ["organizational memory", "company brain", "decision intelligence", "AI agents", "knowledge management", "Cognee", "B2B SaaS"],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Trace",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [{ url: "/trace-logo-full.png", width: 1200, height: 630, alt: "Trace, a Company Brain and Guardian" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/trace-logo-full.png"],
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

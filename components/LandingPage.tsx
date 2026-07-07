@@ -34,17 +34,21 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
 }
 
 function useLiveStats() {
-  const [s, setS] = useState<{ nodes: number; catches: number; findings: number } | null>(null);
+  const [s, setS] = useState<{ nodes: number; catches?: number; findings?: number } | null>(null);
   useEffect(() => {
     let live = true;
-    Promise.all([
-      fetch("/api/graph").then((r) => r.json()).catch(() => ({ nodes: [] })),
-      fetch("/api/github/alerts").then((r) => r.json()).catch(() => ({ alerts: [] })),
-      fetch("/api/pulse").then((r) => r.json()).catch(() => ({ cards: [] })),
-    ]).then(([g, gh, p]) => {
-      if (live) setS({ nodes: (g.nodes ?? []).length, catches: (gh.alerts ?? []).length, findings: (p.cards ?? []).length });
-    });
-    return () => { live = false; };
+    // Public marketing page: fetch ONLY the server-cached graph for the live node
+    // count. Deliberately no /api/pulse or /api/github/alerts here, so a traffic spike
+    // can never trigger the discovery scan; the other tiles use their fallback numbers.
+    fetch("/api/graph")
+      .then((r) => r.json())
+      .catch(() => ({ nodes: [] }))
+      .then((g) => {
+        if (live) setS({ nodes: (g.nodes ?? []).length });
+      });
+    return () => {
+      live = false;
+    };
   }, []);
   return s;
 }
