@@ -23,7 +23,7 @@ interface AskTalkProps {
 
 type Mode = "text" | "voice";
 
-/** One page for querying the memory — type a question or ask by voice. Voice is the
+/** One page for querying the memory, type a question or ask by voice. Voice is the
  *  secondary, optional path (needs an ElevenLabs agent), so text is the default. */
 export default function AskTalk({ onHighlight, graphNodes }: AskTalkProps) {
   const [mode, setMode] = useState<Mode>("text");

@@ -36,7 +36,7 @@ export default function ModelSelector() {
   if (models.length === 0) return null;
 
   return (
-    <label className="flex items-center gap-1.5 text-xs text-faint" title="Answer model (Groq) — switches instantly">
+    <label className="flex items-center gap-1.5 text-xs text-faint" title="Answer model (Groq), switches instantly">
       <span className="hidden lg:inline">Model</span>
       <select
         value={selected}

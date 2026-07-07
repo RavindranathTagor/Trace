@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
 
 /** Render an alert as a chat message the adapter can post verbatim. */
 function formatAlert(a: GuardAlert): string {
-  const tag = a.kind === "drift" ? "⚠️ Heads up — this may reverse an earlier decision." : "⧉ Heads up — this looks like duplicate work.";
-  const cite = `> ${a.prior.quote}` + (a.prior.who || a.prior.when ? ` — ${[a.prior.who, a.prior.when].filter(Boolean).join(", ")}` : "");
+  const tag = a.kind === "drift" ? "⚠️ Heads up, this may reverse an earlier decision." : "⧉ Heads up, this looks like duplicate work.";
+  const cite = `> ${a.prior.quote}` + (a.prior.who || a.prior.when ? `, ${[a.prior.who, a.prior.when].filter(Boolean).join(", ")}` : "");
   const parts = [`**Trace** · ${a.headline}`, tag, cite];
   if (a.why) parts.push(a.why);
   if (a.owner) parts.push(`cc @${a.owner}`);

@@ -28,7 +28,7 @@ type View = "briefing" | "graph" | "timeline" | "ask" | "whatif" | "sources";
 const NAV: { id: View; label: string; icon: JSX.Element; hint: string }[] = [
   { id: "briefing", label: "Briefing", icon: <IconBriefing />, hint: "What your team forgot today" },
   { id: "graph", label: "Graph", icon: <IconGraph />, hint: "The living decision graph" },
-  { id: "timeline", label: "Timeline", icon: <IconTimeline />, hint: "Decisions over time — and reversals" },
+  { id: "timeline", label: "Timeline", icon: <IconTimeline />, hint: "Decisions over time, and reversals" },
   { id: "ask", label: "Ask", icon: <IconAsk />, hint: "Query the memory by text or voice, get cited answers" },
   { id: "whatif", label: "What-if", icon: <IconFuture />, hint: "Project the impact if someone leaves" },
   { id: "sources", label: "Sources", icon: <IconPlug />, hint: "Connect Discord, GitHub, files" },
@@ -165,7 +165,7 @@ export default function Dashboard({ autoTour = false }: { autoTour?: boolean }) 
           {view === "briefing" && (
             <div className="mx-auto max-w-6xl px-6 py-9">
               <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-                {/* The briefing itself — the reason you're here (findings + Play / Re-scan). */}
+                {/* The briefing itself, the reason you're here (findings + Play / Re-scan). */}
                 <div className="min-w-0">
                   <DigestFeed
                     nodeCount={graph.nodes.length}
@@ -177,7 +177,7 @@ export default function Dashboard({ autoTour = false }: { autoTour?: boolean }) 
                   />
                 </div>
 
-                {/* Sidebar: act on it + supporting context — beside the feed, not below. */}
+                {/* Sidebar: act on it + supporting context, beside the feed, not below. */}
                 <aside className="space-y-5 lg:sticky lg:top-0 lg:self-start">
                   <BriefingDeliver />
                   <div className="space-y-4 border-t pt-5" style={{ borderColor: "var(--line)" }}>
@@ -256,7 +256,7 @@ function LiveBadge({ source, count }: { source: "cognee" | "mock"; count: number
         color: live ? "oklch(0.5 0.13 155)" : "oklch(0.55 0.13 66)",
         background: live ? "oklch(0.5 0.13 155 / 0.1)" : "oklch(0.55 0.13 66 / 0.1)",
       }}
-      title={live ? "Live memory (Cognee)" : "Demo data — Cognee not connected"}
+      title={live ? "Live memory (Cognee)" : "Demo data, Cognee not connected"}
     >
       <span className="h-1.5 w-1.5 rounded-full" style={{ background: "currentColor" }} />
       {live ? `Live · ${count} nodes` : "Demo"}
@@ -325,7 +325,7 @@ function GraphEmpty({ onConnect }: { onConnect: () => void }) {
         <IllusEmptyGraph className="mx-auto mb-3 h-32 w-auto" />
         <h2 className="text-base font-semibold text-ink">Your team&apos;s memory is empty</h2>
         <p className="mt-2 text-sm leading-relaxed text-dim">
-          Connect a source and Trace builds the decision graph automatically — then it starts catching drift,
+          Connect a source and Trace builds the decision graph automatically, then it starts catching drift,
           duplicate work, and ownership gaps for you.
         </p>
         <button type="button" onClick={onConnect} className="btn-primary mt-4">

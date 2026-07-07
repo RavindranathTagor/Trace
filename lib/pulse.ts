@@ -1,4 +1,4 @@
-// Trace — the discovery engine.
+// Trace, the discovery engine.
 //
 // This is the differentiator: instead of answering questions (pull), Trace
 // proactively scans the team's memory and surfaces what people HAVEN'T realized:
@@ -6,7 +6,7 @@
 //   - duplicate  : two people/teams building the same thing, unaware
 //   - ownership  : a topic solely owned by one person (bus-factor risk)
 //
-// Everything is grounded in retrieved chunks (real messages/files) — every card
+// Everything is grounded in retrieved chunks (real messages/files), every card
 // cites its sources. We never fabricate facts or numbers. The heavy retrieval is
 // Cognee's temporal graph + vector store; the pattern-reasoning is one guarded
 // LLM pass over the retrieved evidence.
@@ -28,16 +28,16 @@ export interface PulseCard {
   type: PulseCardType;
   title: string; // one-line headline the reader scans
   detail: string; // 1-2 sentences of what was found
-  soWhat: string; // the recommended action — never just "interesting"
+  soWhat: string; // the recommended action, never just "interesting"
   owner?: string; // named owner/team to route this to
-  confidence: number; // 0..1 — only high-confidence cards are surfaced
+  confidence: number; // 0..1, only high-confidence cards are surfaced
   sources: PulseSource[]; // citations; drift REQUIRES >= 2 (earlier + later)
 }
 
 const TYPES: PulseCardType[] = ["drift", "duplicate", "ownership"];
 
 // Broad, decision-oriented probes so the corpus covers what teams actually
-// decide/own/build — not just one query's neighborhood.
+// decide/own/build, not just one query's neighborhood.
 const CORPUS_QUERIES = [
   "decision we will use choose adopt standardize",
   "who owns responsible for leads maintains",
@@ -90,9 +90,9 @@ HARD RULES:
 - Quote the exact supporting text in "sources". A "drift" card MUST include TWO sources: the EARLIER decision quote AND the LATER contradicting quote.
 - Prefer precision over recall: if you are not confident it is real, DO NOT include it. Fewer, correct cards win.
 - Return at most 5 cards, ranked by importance. "soWhat" is an action ("Reconcile with X before merging"), never "interesting".
-Output STRICT JSON only — an array. Example of ONE well-formed drift card:
+Output STRICT JSON only, an array. Example of ONE well-formed drift card:
 {"type":"drift","title":"Billing on MongoDB reverses the Postgres standard","detail":"Q1 standardized all new services on PostgreSQL; a Q2 message migrates billing to MongoDB.","soWhat":"Confirm the exception with the person who set the Postgres standard before shipping.","owner":"Ravindra","confidence":0.9,"sources":[{"quote":"we are standardizing ALL new services on PostgreSQL","who":"Ravindra","when":"Q1"},{"quote":"Migrating the new billing service to MongoDB","who":"Sandesh","when":"Q2"}]}
-Return the JSON array only — no prose, no markdown, no code fences.`;
+Return the JSON array only, no prose, no markdown, no code fences.`;
 
 function safeParseCards(raw: string): PulseCard[] {
   const cleaned = raw.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
@@ -115,7 +115,7 @@ function safeParseCards(raw: string): PulseCard[] {
     const type = String(o.type ?? "").toLowerCase() as PulseCardType;
     if (!TYPES.includes(type)) return;
     const detail = String(o.detail ?? "").trim();
-    // Resilience: a strong model occasionally fills detail but leaves title blank —
+    // Resilience: a strong model occasionally fills detail but leaves title blank -
     // synthesize a headline from the detail rather than dropping a real finding.
     let title = String(o.title ?? "").trim();
     if (!title) title = detail.split(/[.!?]/)[0].trim().slice(0, 90);
@@ -159,7 +159,7 @@ export interface PulseScan {
 // Deterministic briefing for the demo, every card grounded in a real corpus quote.
 // A local LLM (qwen) is too slow to generate this live on every load, so when
 // PULSE_AUTHORED=true we serve these instantly. Same findings the live Guardian
-// catches — drift (x2), duplicate, ownership — so the briefing and the live demo agree.
+// catches, drift (x2), duplicate, ownership, so the briefing and the live demo agree.
 function authoredCards(): PulseCard[] {
   return [
     {
@@ -185,7 +185,7 @@ function authoredCards(): PulseCard[] {
       confidence: 0.9,
       sources: [
         { quote: "we will NOT support on-prem deployments this year. Cloud-only, to keep the team small.", who: "Ravindra", when: "Q1" },
-        { quote: "Big customer Acme needs on-prem — we should build on-prem support this quarter.", who: "Sandesh", when: "Q2" },
+        { quote: "Big customer Acme needs on-prem, we should build on-prem support this quarter.", who: "Sandesh", when: "Q2" },
       ],
     },
     {
@@ -197,15 +197,15 @@ function authoredCards(): PulseCard[] {
       owner: "Pushpa",
       confidence: 0.86,
       sources: [
-        { quote: "Shipped ONE shared, generic retry queue in platform-core — every service must REUSE it.", who: "Ravindra", when: "Q1" },
+        { quote: "Shipped ONE shared, generic retry queue in platform-core, every service must REUSE it.", who: "Ravindra", when: "Q1" },
         { quote: "I started building a retry queue for the payments service.", who: "Pushpa", when: "Q2" },
       ],
     },
     {
       id: "own-auth",
       type: "ownership",
-      title: "Authentication is single-owner — and the owner is on leave",
-      detail: "Ravindra owns authentication end-to-end (all auth changes go through him) and is on leave all of next month — a bus-factor risk while he's out.",
+      title: "Authentication is single-owner, and the owner is on leave",
+      detail: "Ravindra owns authentication end-to-end (all auth changes go through him) and is on leave all of next month, a bus-factor risk while he's out.",
       soWhat: "Name a backup owner for auth before Ravindra's leave starts.",
       owner: "Ravindra",
       confidence: 0.88,
@@ -235,7 +235,7 @@ export async function runPulseScan(nowIso: string): Promise<PulseScan> {
   }
 
   const evidence = corpus.map((t, i) => `[${i + 1}] ${t}`).join("\n");
-  // Reason over the evidence via the LLM failover chain (Ollama-first) — so the
+  // Reason over the evidence via the LLM failover chain (Ollama-first), so the
   // briefing works when Groq's daily cap is exhausted or Cognee's completion is slow.
   const content = await chatComplete(
     [
@@ -245,13 +245,13 @@ export async function runPulseScan(nowIso: string): Promise<PulseScan> {
     { temperature: 0.1, maxTokens: 1400, timeoutMs: 60000 },
   );
   if (!content) {
-    console.error("[pulse] scan failed: no LLM response — using authored briefing");
+    console.error("[pulse] scan failed: no LLM response, using authored briefing");
     return { cards: authoredCards(), scanned: corpus.length, generatedAt: nowIso };
   }
   const cards = safeParseCards(content)
     .sort((a, b) => b.confidence - a.confidence)
     .slice(0, 5);
-  // A local model sometimes returns malformed/empty JSON — don't show a blank briefing.
+  // A local model sometimes returns malformed/empty JSON, don't show a blank briefing.
   if (cards.length === 0) return { cards: authoredCards(), scanned: corpus.length, generatedAt: nowIso };
   return { cards, scanned: corpus.length, generatedAt: nowIso };
 }

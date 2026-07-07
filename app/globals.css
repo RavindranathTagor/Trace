@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Trace design system — "premium minimal" (BRICX-grade) ────────────────
+/* ── Trace design system, "premium minimal" (BRICX-grade) ────────────────
    Light-first, calm, whitespace-driven. One restrained accent; near-monochrome
-   otherwise. Hairline borders, very soft shadows — no glass, no glow. OKLCH for
+   otherwise. Hairline borders, very soft shadows, no glass, no glow. OKLCH for
    perceptually-even color; 8px spacing grid; AA+ contrast. Flip to dark = swap
    the token block under [data-theme="dark"]. */
 :root {
@@ -120,7 +120,7 @@ body {
     box-shadow: var(--shadow-sm);
   }
 
-  /* A "finding" — reads like a line in a trusted analyst's memo. The left rail
+  /* A "finding", reads like a line in a trusted analyst's memo. The left rail
      carries the semantic color (set via --accent-card inline per card type). */
   .brief-card {
     @apply relative overflow-hidden rounded-2xl p-5 transition-colors;
@@ -206,7 +206,7 @@ body {
     transform: scale(1);
   }
 }
-/* Flowing dash along reversal connectors — the "time is moving" effect. */
+/* Flowing dash along reversal connectors, the "time is moving" effect. */
 @keyframes trace-flow {
   to {
     stroke-dashoffset: -16;
@@ -256,7 +256,7 @@ body {
     opacity: 1;
   }
 }
-/* Horizontal packet — a light travels a ruler/rail left→right (sibling of trace-travel). */
+/* Horizontal packet, a light travels a ruler/rail left→right (sibling of trace-travel). */
 @keyframes trace-travel-x {
   0% {
     transform: translateX(var(--tx0, 0));

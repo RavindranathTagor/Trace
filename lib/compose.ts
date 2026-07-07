@@ -1,5 +1,5 @@
 // Compose a concise answer from the team's memory. PRIMARY path uses Cognee's OWN
-// managed LLM (GRAPH_COMPLETION) — one call that retrieves the subgraph AND writes
+// managed LLM (GRAPH_COMPLETION), one call that retrieves the subgraph AND writes
 // the answer, so we no longer depend on Groq for question-answering. Groq remains
 // only as a DEEP FALLBACK for when Cognee's completion is unavailable/empty (it can
 // stall when its LLM is rate-limited), composing over the context we already pulled.
@@ -13,7 +13,7 @@ const ANSWER_PROMPT =
   "You answer questions about a team's decisions using ONLY the team's memory. " +
   "Be concise and specific (1-3 sentences). Lead with the decision/answer, then who and why. " +
   "If the memory doesn't contain the answer, say you don't have that in the team's memory yet. " +
-  "Reply with only the final answer — no reasoning.";
+  "Reply with only the final answer, no reasoning.";
 
 /** Turn Cognee's raw context markup into readable text (fallback display). */
 export function cleanContext(ctx: string): string {
@@ -35,8 +35,8 @@ function looksUnhelpful(a: string): boolean {
 }
 
 export async function composeAnswer(question: string, context: string): Promise<string> {
-  // 1) PRIMARY — Cognee's managed LLM composes the answer over its own retrieval.
-  // Skipped when COGNEE_SKIP_COMPLETION=true (a slow local completion LLM) — we then
+  // 1) PRIMARY, Cognee's managed LLM composes the answer over its own retrieval.
+  // Skipped when COGNEE_SKIP_COMPLETION=true (a slow local completion LLM), we then
   // compose directly over the context the caller already retrieved, via Ollama.
   if (process.env.COGNEE_SKIP_COMPLETION !== "true") {
     try {
@@ -50,7 +50,7 @@ export async function composeAnswer(question: string, context: string): Promise<
     }
   }
 
-  // 2) FALLBACK — compose over the context we already retrieved, via the LLM
+  // 2) FALLBACK, compose over the context we already retrieved, via the LLM
   //    failover chain (Groq → Google → Ollama). If none are configured, return the
   //    cleaned raw context so the user still gets an answer.
   const ctx = (context || "").trim().slice(0, MAX_CONTEXT_CHARS);

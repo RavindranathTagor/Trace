@@ -1,6 +1,6 @@
 "use client";
 
-// The one Trace character — glowing amber antenna (the logo's lit node), blinking
+// The one Trace character, glowing amber antenna (the logo's lit node), blinking
 // eyes, a smile, side-bolts, and a body. Shared by the guide agent AND the Talk
 // avatar. `mouth` (0..1) drives lip-sync; `talk` glows the antenna/cheeks.
 export function TraceBot({
@@ -42,7 +42,7 @@ export function TraceBot({
           <circle cx="44" cy="39" r="2.8" fill="#f2b04a" opacity={0.14 + open * 0.22} />
         </>
       )}
-      {/* mouth — opens with amplitude, else a smile */}
+      {/* mouth, opens with amplitude, else a smile */}
       {open > 0.12 ? (
         <ellipse cx="32" cy="41" rx="4.5" ry={2 + open * 5.5} fill="#23262f" />
       ) : (

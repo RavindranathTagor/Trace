@@ -3,7 +3,7 @@
 // consistently across the graph and the Q&A panels.
 //
 // NOTE on semantics: Cognee's REST API does not (yet) expose per-node deletion, so
-// "forget" is enforced as a serve-time redaction filter over everything we return —
+// "forget" is enforced as a serve-time redaction filter over everything we return -
 // NOT a hard delete from the underlying graph. To make it durable, the forgotten
 // set is PERSISTED to data/forgotten.json and reloaded on boot, so the redaction
 // survives a server restart (previously it was in-memory only and reset on restart).
@@ -15,7 +15,7 @@ import type { GraphData, RecallResult } from "@/lib/types";
 const FILE = join(process.cwd(), "data", "forgotten.json");
 
 // globalThis-backed: written by /api/forget but read by /api/recall, /api/graph
-// and /api/pulse — separate route bundles would otherwise each see an empty set
+// and /api/pulse, separate route bundles would otherwise each see an empty set
 // and redaction would silently not apply.
 const g = globalThis as unknown as { __traceForgotten?: Set<string> };
 const forgotten = (g.__traceForgotten ??= loadForgotten());
@@ -93,7 +93,7 @@ export function redactRecall(r: RecallResult): RecallResult {
   if (containsForgotten(r.answer) || containsForgotten(r.context)) {
     return {
       ...r,
-      answer: "That topic has been forgotten — it was redacted from the team's memory.",
+      answer: "That topic has been forgotten, it was redacted from the team's memory.",
       context: "",
       nodeIds: [],
       sources: [],

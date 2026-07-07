@@ -1,6 +1,6 @@
 "use client";
 
-// Self-contained "deliver the briefing" bar — fetches which platforms can receive
+// Self-contained "deliver the briefing" bar, fetches which platforms can receive
 // a briefing, lets you toggle targets (connected = selectable, not-connected =
 // greyed with an "i" how-to), and posts to the ones you pick. Drop it anywhere.
 
@@ -13,7 +13,7 @@ const PLATFORMS: {
   Logo: (p: { className?: string }) => JSX.Element;
   howTo: string;
 }[] = [
-  { id: "discord", name: "Discord", Logo: DiscordLogo, howTo: "Set a Channel ID in Sources → Discord (the bot posts there — no webhook needed)." },
+  { id: "discord", name: "Discord", Logo: DiscordLogo, howTo: "Set a Channel ID in Sources → Discord (the bot posts there, no webhook needed)." },
   { id: "slack", name: "Slack", Logo: SlackLogo, howTo: "Add an Incoming Webhook (post-only) or a bot token + channel (two-way) in Sources → Slack." },
   { id: "teams", name: "Teams", Logo: TeamsLogo, howTo: "Add a Teams Incoming Webhook URL in Sources → Teams." },
 ];
@@ -49,7 +49,7 @@ export default function BriefingDeliver() {
       const sent = Object.entries(d.delivered ?? {}).filter(([, v]) => v === "sent").map(([k]) => k);
       setMsg(sent.length ? { text: `Briefing sent to ${sent.join(", ")}.`, kind: "ok" } : { text: d.note || "Nothing was sent.", kind: "err" });
     } catch {
-      setMsg({ text: "Couldn't send — try again.", kind: "err" });
+      setMsg({ text: "Couldn't send, try again.", kind: "err" });
     } finally {
       setBusy(false);
       load();
@@ -87,7 +87,7 @@ export default function BriefingDeliver() {
                 key={p.id}
                 type="button"
                 onClick={() => setPicked((x) => ({ ...x, [p.id]: !(x[p.id] ?? true) }))}
-                title={on ? `Sending to ${p.name} — click to skip` : `Skipping ${p.name} — click to include`}
+                title={on ? `Sending to ${p.name}, click to skip` : `Skipping ${p.name}, click to include`}
                 className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[12px] font-medium transition-colors"
                 style={{ border: `1px solid ${on ? "var(--accent)" : "var(--line)"}`, background: on ? "var(--accent-soft)" : "var(--surface)", color: on ? "var(--accent-ink)" : "var(--ink-dim)" }}
               >
@@ -102,7 +102,7 @@ export default function BriefingDeliver() {
           </button>
         </div>
       </div>
-      {!anyConnected && <p className="mt-2 text-[11px] text-faint">No channels connected — hover a greyed platform to see how, or open Sources.</p>}
+      {!anyConnected && <p className="mt-2 text-[11px] text-faint">No channels connected, hover a greyed platform to see how, or open Sources.</p>}
       {msg && (
         <div className="mt-2 rounded-lg px-3 py-1.5 text-[12px]" style={{ background: msg.kind === "ok" ? "oklch(0.5 0.13 155 / 0.1)" : "color-mix(in oklab, var(--drift) 10%, transparent)", color: msg.kind === "ok" ? "oklch(0.45 0.13 155)" : "var(--drift)" }}>
           {msg.text}

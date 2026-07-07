@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // POST /api/integrations/discord { token?, channelId?, action?: "start" | "stop" }
-// Saving a token + hitting start is the whole Discord setup — the app runs the
+// Saving a token + hitting start is the whole Discord setup, the app runs the
 // agent as a managed child process (no terminal needed).
 export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => ({}))) as { token?: string; channelId?: string; action?: string };

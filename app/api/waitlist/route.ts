@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 // Lightweight validation capture for the landing page:
 //   POST { email?, vote: "up"|"down", comment?, source? }
 // Appends to data/waitlist.jsonl AND (reliably, since Render's disk is ephemeral)
-// forwards each submission to WAITLIST_WEBHOOK_URL — a Discord or Slack incoming
-// webhook — so you get a live feed of who liked/disliked and their comments.
+// forwards each submission to WAITLIST_WEBHOOK_URL, a Discord or Slack incoming
+// webhook, so you get a live feed of who liked/disliked and their comments.
 //   GET -> { count, up, down } for the "N people already interested" social proof.
 
 const FILE = join(process.cwd(), "data", "waitlist.jsonl");
@@ -41,7 +41,7 @@ async function notify(e: Entry) {
     (e.comment ? `• Comment: ${e.comment}\n` : "") +
     (e.source ? `• From: ${e.source}\n` : "");
   try {
-    // Discord expects `content`, Slack expects `text` — send both; each ignores the other.
+    // Discord expects `content`, Slack expects `text`, send both; each ignores the other.
     await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
   try {
     await appendFile(FILE, JSON.stringify(entry) + "\n", "utf8");
   } catch {
-    /* ephemeral FS — the webhook is the durable record */
+    /* ephemeral FS, the webhook is the durable record */
   }
   void notify(entry);
 

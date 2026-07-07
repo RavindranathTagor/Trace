@@ -1,5 +1,5 @@
 // Outbound messaging for the "post the morning briefing" feature. Each destination
-// gets a NATIVELY-styled message: Discord markdown, Slack Block Kit, Teams MessageCard —
+// gets a NATIVELY-styled message: Discord markdown, Slack Block Kit, Teams MessageCard -
 // so the briefing looks designed, not like raw text pasted everywhere.
 
 import { postToDiscord } from "@/lib/discordRest";
@@ -18,19 +18,19 @@ const FOOTER = "Cited, dated, zero fabricated numbers · react 👍 / 👎 in th
 
 function heading(scan: PulseScan): string {
   const n = scan.cards.length;
-  return n === 0 ? "Trace — you're all clear today" : `Trace — ${n} thing${n === 1 ? "" : "s"} your team forgot today`;
+  return n === 0 ? "Trace, you're all clear today" : `Trace, ${n} thing${n === 1 ? "" : "s"} your team forgot today`;
 }
 
 // ── Discord: markdown (**bold**, > quote, emoji) ──────────────────────────────
 export function formatBriefingDiscord(scan: PulseScan): string {
-  if (scan.cards.length === 0) return "🟢 **Trace — morning briefing**\nNothing new surfaced today. You're in the clear.";
+  if (scan.cards.length === 0) return "🟢 **Trace, morning briefing**\nNothing new surfaced today. You're in the clear.";
   const lines = [`🧠 **${heading(scan)}**`, ""];
   scan.cards.forEach((c, i) => {
-    lines.push(`**${i + 1}. ${TYPE_LABEL[c.type]} — ${c.title}**`);
+    lines.push(`**${i + 1}. ${TYPE_LABEL[c.type]}, ${c.title}**`);
     if (c.detail) lines.push(c.detail);
     if (c.soWhat) lines.push(`→ _${c.soWhat}_`);
     const src = c.sources[0];
-    if (src?.quote) lines.push(`> ${src.quote.slice(0, 180)}${src.who ? ` — **${src.who}**` : ""}`);
+    if (src?.quote) lines.push(`> ${src.quote.slice(0, 180)}${src.who ? `, **${src.who}**` : ""}`);
     lines.push("");
   });
   lines.push(`_${FOOTER}_`);
@@ -42,17 +42,17 @@ export const formatBriefing = formatBriefingDiscord;
 // ── Slack: Block Kit (header + sections + context + dividers) ─────────────────
 function slackBlocks(scan: PulseScan): unknown[] {
   if (scan.cards.length === 0)
-    return [{ type: "section", text: { type: "mrkdwn", text: "🟢 *Trace — morning briefing*\nNothing new surfaced today. You're in the clear." } }];
+    return [{ type: "section", text: { type: "mrkdwn", text: "🟢 *Trace, morning briefing*\nNothing new surfaced today. You're in the clear." } }];
   const blocks: unknown[] = [
     { type: "header", text: { type: "plain_text", text: `🧠 ${heading(scan)}`, emoji: true } },
   ];
   scan.cards.forEach((c, i) => {
-    const parts = [`*${i + 1}. ${TYPE_LABEL[c.type]} — ${c.title}*`];
+    const parts = [`*${i + 1}. ${TYPE_LABEL[c.type]}, ${c.title}*`];
     if (c.detail) parts.push(c.detail);
     if (c.soWhat) parts.push(`→ _${c.soWhat}_`);
     blocks.push({ type: "section", text: { type: "mrkdwn", text: parts.join("\n") } });
     const src = c.sources[0];
-    if (src?.quote) blocks.push({ type: "context", elements: [{ type: "mrkdwn", text: `> ${src.quote.slice(0, 180)}${src.who ? ` — *${src.who}*` : ""}` }] });
+    if (src?.quote) blocks.push({ type: "context", elements: [{ type: "mrkdwn", text: `> ${src.quote.slice(0, 180)}${src.who ? `, *${src.who}*` : ""}` }] });
     blocks.push({ type: "divider" });
   });
   blocks.push({ type: "context", elements: [{ type: "mrkdwn", text: FOOTER }] });
@@ -66,8 +66,8 @@ function teamsCard(scan: PulseScan): Record<string, unknown> {
       ? [{ text: "Nothing new surfaced today. You're in the clear." }]
       : scan.cards.map((c, i) => {
           const src = c.sources[0];
-          const bits = [c.detail, c.soWhat ? `➡️ _${c.soWhat}_` : "", src?.quote ? `> ${src.quote.slice(0, 180)}${src.who ? ` — ${src.who}` : ""}` : ""].filter(Boolean);
-          return { activityTitle: `**${i + 1}. ${TYPE_LABEL[c.type]} — ${c.title}**`, text: bits.join("\n\n") };
+          const bits = [c.detail, c.soWhat ? `➡️ _${c.soWhat}_` : "", src?.quote ? `> ${src.quote.slice(0, 180)}${src.who ? `, ${src.who}` : ""}` : ""].filter(Boolean);
+          return { activityTitle: `**${i + 1}. ${TYPE_LABEL[c.type]}, ${c.title}**`, text: bits.join("\n\n") };
         });
   return {
     "@type": "MessageCard",

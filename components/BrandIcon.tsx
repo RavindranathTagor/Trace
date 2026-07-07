@@ -1,7 +1,7 @@
 // Real, official brand marks via simple-icons (open-source brand-icon set, used for
 // referencing integrations). Tree-shaken named imports keep the bundle small. Brands
 // simple-icons doesn't carry (Slack, Teams, Groq, Aider, Cognee) fall back to the
-// hand-built marks in Logos.tsx / Icons.tsx — see BrandLogo below.
+// hand-built marks in Logos.tsx / Icons.tsx, see BrandLogo below.
 
 import {
   siGithub, siNotion, siLinear, siDiscord, siNextdotjs, siClaude, siAnthropic,
@@ -39,7 +39,7 @@ export function BrandIcon({ slug, className = "h-5 w-5", color = true }: { slug:
   );
 }
 
-// Brands simple-icons doesn't ship — reuse our clean marks so the whole set stays
+// Brands simple-icons doesn't ship, reuse our clean marks so the whole set stays
 // consistent. (These render the closest official-style mark we can ship without the
 // vendor's asset.)
 const FALLBACK: Record<string, (p: { className?: string }) => JSX.Element> = {

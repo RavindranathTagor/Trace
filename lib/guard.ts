@@ -1,10 +1,10 @@
-// Trace's Guardian — the real-time agent check that makes Trace an agent, not a
+// Trace's Guardian, the real-time agent check that makes Trace an agent, not a
 // dashboard. When a new message/PR lands, we ask the team's memory: does this
 // contradict or duplicate something already decided? If so (high confidence,
 // cited), Trace speaks up in-thread. If not, silence.
 //
 // The judgment now runs on Cognee's OWN managed LLM (GRAPH_COMPLETION retrieves the
-// prior decisions AND reasons over them in one call) — so the guard no longer
+// prior decisions AND reasons over them in one call), so the guard no longer
 // depends on Groq. Groq stays only as a DEEP FALLBACK if Cognee's completion is
 // unavailable, judging over context we retrieve ourselves.
 //
@@ -27,7 +27,7 @@ const SYSTEM = `You are Trace's Guardian. You are given a NEW team message and t
 decisions from long-term memory. Decide if the NEW message:
 - "drift": CONTRADICTS or REVERSES a prior DECISION (e.g. prior "we standardized on Postgres",
   new "migrating to MongoDB"; or prior "no on-prem this year", new "let's build on-prem"), or
-- "duplicate": redoes work a prior message shows someone already did or is building — INCLUDING
+- "duplicate": redoes work a prior message shows someone already did or is building, INCLUDING
   building a service-specific version of something that already exists as a shared/generic
   component (e.g. prior "platform-core ships ONE shared retry queue every service must reuse",
   new "I'm building a retry queue for the payments service" -> duplicate).
@@ -40,7 +40,7 @@ Output STRICT JSON only, one of:
 {"alert": {"kind":"drift"|"duplicate","headline":"<=14 words","why":"the reconciliation ask","owner":"name or empty","prior":{"quote":"exact prior text","who":"","when":""}}}`;
 
 /** Extract an alert from a model reply. `found` distinguishes "a JSON verdict was
- *  present" (authoritative — even {"alert":null} = deliberate silence) from "no
+ *  present" (authoritative, even {"alert":null} = deliberate silence) from "no
  *  parseable JSON" (garbage/error → the caller should fall back). */
 export function extractAlert(raw: string): { found: boolean; alert: GuardAlert | null } {
   const cleaned = raw.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
@@ -89,7 +89,7 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
   // snapshot. Set COGNEE_SKIP_COMPLETION=true to keep the live guard snappy.
   const skipCompletion = process.env.COGNEE_SKIP_COMPLETION === "true";
 
-  // 1) PRIMARY — Cognee's managed LLM retrieves the prior decisions AND judges,
+  // 1) PRIMARY, Cognee's managed LLM retrieves the prior decisions AND judges,
   // in a single GRAPH_COMPLETION call. The verdict instruction rides in the query
   // (works regardless of whether the backend honors a custom system prompt).
   const guardQuery =
@@ -104,20 +104,20 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
     try {
       const raw = await completeWithCognee(guardQuery, SYSTEM, 8);
       const r = extractAlert(raw);
-      if (r.found) return r.alert; // authoritative — an alert, or a deliberate silence
+      if (r.found) return r.alert; // authoritative, an alert, or a deliberate silence
     } catch (err) {
       console.error("[guard] Cognee judge unavailable, falling back:", err instanceof Error ? err.message : err);
     }
   }
 
-  // 2) FALLBACK — retrieve evidence ourselves and judge via the LLM failover chain
+  // 2) FALLBACK, retrieve evidence ourselves and judge via the LLM failover chain
   // (Groq → Google → Ollama). Only when at least one provider is configured;
   // otherwise Cognee was our only judge and we stay silent.
   if (!llmAvailable()) return null;
 
   const head = msg.slice(0, 48).toLowerCase();
   const prior: string[] = [];
-  // Cognee retrieval (chunks + graph context) — SKIPPED in fast mode, because on a
+  // Cognee retrieval (chunks + graph context), SKIPPED in fast mode, because on a
   // local Ollama-backed Cognee these calls add tens of seconds. In fast mode we judge
   // over the local snapshot alone, which is what keeps the live guard replying in ~seconds.
   if (!skipCompletion) {

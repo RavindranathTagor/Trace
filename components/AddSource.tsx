@@ -23,13 +23,13 @@ export default function AddSource({ onIngested }: { onIngested: () => void }) {
       const data = await res.json();
       if (data.ok) {
         const total = (data.files ?? []).reduce((a: number, b: { chars?: number }) => a + (b.chars ?? 0), 0);
-        setStatus(`Ingested ${files.length} file(s) · ${total.toLocaleString()} chars — building memory…`);
+        setStatus(`Ingested ${files.length} file(s) · ${total.toLocaleString()} chars, building memory…`);
         setTimeout(onIngested, 2500);
       } else {
         setStatus(data.error || "No text could be extracted.");
       }
     } catch {
-      setStatus("Upload failed — is the app running?");
+      setStatus("Upload failed, is the app running?");
     } finally {
       setBusy(false);
     }
@@ -47,7 +47,7 @@ export default function AddSource({ onIngested }: { onIngested: () => void }) {
         body: JSON.stringify([{ source: "transcript", channel: "manual", author: "Pasted notes", text: t, ts: new Date().toISOString() }]),
       });
       setPaste("");
-      setStatus("Added — building memory…");
+      setStatus("Added, building memory…");
       setTimeout(onIngested, 2500);
     } finally {
       setBusy(false);
@@ -59,7 +59,7 @@ export default function AddSource({ onIngested }: { onIngested: () => void }) {
       <div>
         <h3 className="text-sm font-semibold text-ink">Add to memory</h3>
         <p className="mt-1 text-xs leading-relaxed text-dim">
-          Drop a PDF, Word, Excel, or text file — it&apos;s parsed and remembered automatically. Files posted in
+          Drop a PDF, Word, Excel, or text file, it&apos;s parsed and remembered automatically. Files posted in
           Discord/Teams are ingested the same way.
         </p>
       </div>

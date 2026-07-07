@@ -1,5 +1,5 @@
 // Runs the Discord agent (adapters/discord-bot.mjs) as a child process, started
-// and stopped from the Integrations UI — no terminal or env editing required.
+// and stopped from the Integrations UI, no terminal or env editing required.
 // State is globalThis-backed so every API route sees the same process.
 //
 // Supervised: an unexpected crash is auto-restarted with exponential backoff (up
@@ -137,7 +137,7 @@ function childAlive(): boolean {
 }
 
 /** Re-spawn the bot if the user had it running (autoStart flag) but the child is
- *  gone or stuck — a dev-server restart kills the child, and a poll-triggered spawn
+ *  gone or stuck, a dev-server restart kills the child, and a poll-triggered spawn
  *  in a torn-down worker can leave a phantom "starting" status with no process. This
  *  self-heals from ANY unhealthy state. Called from the polled /api/integrations GET
  *  and from the server-boot hook. Cooldown so it never storms. */

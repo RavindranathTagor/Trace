@@ -8,11 +8,11 @@ import { decisionsForText, reversalPairs, type Decision } from "@/data/decisions
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// GET|POST /api/brain?q=...  — the COMPANY BRAIN API.
+// GET|POST /api/brain?q=... , the COMPANY BRAIN API.
 //
 // The machine-consumable face of Trace: an AI agent (or any service) calls this
-// *before it acts* to check what the company has actually decided — the current
-// call, who owns it, why, and what it reversed — so the agent operates on live
+// *before it acts* to check what the company has actually decided, the current
+// call, who owns it, why, and what it reversed, so the agent operates on live
 // org truth instead of a stale prompt. This is "the missing layer between raw
 // company data and reliable AI automation" (YC "Company Brain").
 //
@@ -36,7 +36,7 @@ async function handle(query: string) {
   const q = query.trim();
   if (!q) return NextResponse.json({ error: "query (q) is required" }, { status: 400 });
 
-  // 1) Structured facts from the decision ledger — always available, agent-consumable.
+  // 1) Structured facts from the decision ledger, always available, agent-consumable.
   const related = decisionsForText(q);
   const reversedBy = new Map<string, Decision>();
   reversalPairs().forEach((p) => reversedBy.set(p.from.id, p.to));
@@ -51,7 +51,7 @@ async function handle(query: string) {
   }));
 
   // 2) Composed answer from live memory (best effort). Bounded by BRAIN_LLM_BUDGET_MS
-  // so a stalling/slow Cloud can NEVER block the brain — the ledger facts are already
+  // so a stalling/slow Cloud can NEVER block the brain, the ledger facts are already
   // ready, so we'd rather answer fast from them than hang waiting on a completion.
   const BRAIN_LLM_BUDGET_MS = 5000;
   let answer = "";
@@ -70,7 +70,7 @@ async function handle(query: string) {
     answer = await Promise.race([cognee, new Promise<string>((r) => setTimeout(() => r(""), BRAIN_LLM_BUDGET_MS))]);
   }
 
-  // 3) Deterministic ledger fallback so the brain always answers (demo-proof) — used
+  // 3) Deterministic ledger fallback so the brain always answers (demo-proof), used
   // when Cognee returned nothing OR a "no memory" answer while the ledger DOES know.
   // Status-aware: NEVER present a superseded decision as the current one.
   const noMemory = /don.?t have|do not have|not in the team|no relevant|haven.?t/i.test(answer);
@@ -81,12 +81,12 @@ async function handle(query: string) {
         `Current: ${current.title} (${current.date}), owned by ${current.owner}. ${current.why}` +
         (current.reverses ? " This reversed an earlier decision." : "");
     } else if (related.length > 0) {
-      // Only superseded/at-risk matched — point to whatever replaced it, if known.
+      // Only superseded/at-risk matched, point to whatever replaced it, if known.
       const d0 = related[0];
       const newer = reversedBy.get(d0.id);
       answer = newer
         ? `“${d0.title}” was superseded. Current: ${newer.title} (${newer.date}), owned by ${newer.owner}. ${newer.why}`
-        : `${d0.title} (${d0.date}) — status: ${d0.status}. ${d0.why}`;
+        : `${d0.title} (${d0.date}), status: ${d0.status}. ${d0.why}`;
     } else {
       answer = "No decision on that is recorded in the team's memory yet.";
     }

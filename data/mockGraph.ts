@@ -106,7 +106,7 @@ const ANSWERS: MockAnswer[] = [
   {
     match: (q) => q.includes("mongo") || q.includes("database") || q.includes("postgres") || q.includes("db "),
     answer:
-      "The team standardized on PostgreSQL for all new services — no MongoDB for new services — to keep one database to operate. Ravindra set that decision. Moving the billing service to MongoDB would reverse it.",
+      "The team standardized on PostgreSQL for all new services, no MongoDB for new services, to keep one database to operate. Ravindra set that decision. Moving the billing service to MongoDB would reverse it.",
     context:
       "Decision[Standardize on PostgreSQL, 2026-01-15] -because-> Reason[One database to operate]; Ravindra -decided-> it. Decision[Migrate billing to MongoDB] -conflicts_with-> PostgreSQL standard.",
     nodeIds: ["d-postgres", "r-onedb", "p-ravindra", "d-mongo"],
@@ -122,7 +122,7 @@ const ANSWERS: MockAnswer[] = [
   {
     match: (q) => q.includes("retry") || q.includes("queue"),
     answer:
-      "There is already a generic retry queue in platform-core (Ravindra, PR #412) meant for all services to reuse. Building a separate retry queue for the payments service would duplicate it — reuse platform-core instead.",
+      "There is already a generic retry queue in platform-core (Ravindra, PR #412) meant for all services to reuse. Building a separate retry queue for the payments service would duplicate it, reuse platform-core instead.",
     context:
       "Decision[Generic retry queue in platform-core, 2026-01-22] -because-> Reason[Reuse across all services]. Decision[Retry queue for payments] -duplicates-> it.",
     nodeIds: ["d-retryqueue", "r-reuse", "p-ravindra", "d-pay-retry"],
@@ -130,7 +130,7 @@ const ANSWERS: MockAnswer[] = [
   {
     match: (q) => q.includes("auth") || q.includes("who owns") || q.includes("ownership") || q.includes("leave") || q.includes("bus"),
     answer:
-      "Ravindra owns authentication end-to-end — all auth changes go through him. Heads up: he's on leave all of next month, so auth is a single-owner / bus-factor risk while he's out. Pushpa owns the payments service.",
+      "Ravindra owns authentication end-to-end, all auth changes go through him. Heads up: he's on leave all of next month, so auth is a single-owner / bus-factor risk while he's out. Pushpa owns the payments service.",
     context:
       "Ravindra -owns-> Authentication (at-risk); Ravindra on leave next month -blocks-> auth ownership. Pushpa -owns-> Payments.",
     nodeIds: ["a-auth", "p-ravindra", "b-leave", "a-payments", "p-pushpa"],

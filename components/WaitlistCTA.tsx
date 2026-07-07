@@ -70,7 +70,7 @@ export default function WaitlistCTA({ source = "landing", compact = false }: { s
           <div className="text-[15px] font-semibold text-ink">Join the private beta</div>
           {!compact && (
             <p className="mt-1 text-sm text-dim">
-              Be first to give your company a shared memory — and a guardian that catches decisions before they go wrong.
+              Be first to give your company a shared memory, and a guardian that catches decisions before they go wrong.
             </p>
           )}
           <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -96,7 +96,7 @@ export default function WaitlistCTA({ source = "landing", compact = false }: { s
       {/* Reaction + feedback */}
       <div className="mt-5 border-t pt-4" style={{ borderColor: "var(--line)" }}>
         {voteSent ? (
-          <p className="text-sm text-dim">Thank you — your feedback shapes what we build next. 🙏</p>
+          <p className="text-sm text-dim">Thank you, your feedback shapes what we build next. 🙏</p>
         ) : (
           <>
             <div className="flex items-center gap-3">

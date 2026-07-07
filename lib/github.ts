@@ -1,5 +1,5 @@
 // Minimal GitHub helper: fetch open "bug"-labelled issues from a repo, mapped into
-// the Company-Brain known-bugs shape. Fail-soft by design — returns [] on any error
+// the Company-Brain known-bugs shape. Fail-soft by design, returns [] on any error
 // (no token, missing Issues:read scope, network), so the context pack never breaks.
 
 import type { KnownIssue, Severity } from "@/data/knownIssues";

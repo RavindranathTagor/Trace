@@ -17,7 +17,7 @@ export async function POST() {
     return NextResponse.json({
       ok: true,
       source: "mock",
-      message: "Cognee disabled — the UI is serving the built-in mock graph already.",
+      message: "Cognee disabled, the UI is serving the built-in mock graph already.",
     });
   }
 

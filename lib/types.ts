@@ -1,4 +1,4 @@
-// Shared types for Hindsight — the AI teammate that never forgets a decision.
+// Shared types for Hindsight, the AI teammate that never forgets a decision.
 
 export type NodeType =
   | "Decision"
@@ -34,7 +34,7 @@ export interface GraphData {
 export interface RecallResult {
   /** Natural-language answer (composed by Cognee GRAPH_COMPLETION or the caller's LLM). */
   answer: string;
-  /** The traversed subgraph as text — what was sent to / used by the LLM. */
+  /** The traversed subgraph as text, what was sent to / used by the LLM. */
   context: string;
   /** Node ids to light up in the graph. */
   nodeIds: string[];
@@ -50,7 +50,7 @@ export interface Meeting {
   date: string; // ISO date
   title: string;
   attendees: string[];
-  /** Raw transcript/notes — this is what gets sent to Cognee `add`. */
+  /** Raw transcript/notes, this is what gets sent to Cognee `add`. */
   text: string;
 }
 

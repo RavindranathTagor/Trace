@@ -58,7 +58,7 @@ export default function VideoShowcase() {
             <iframe
               key={withSound ? "sound" : "muted"}
               src={src}
-              title="Trace — demo"
+              title="Trace, demo"
               className="absolute inset-0 h-full w-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -72,7 +72,7 @@ export default function VideoShowcase() {
             />
           )}
 
-          {/* Play-with-sound button — shown until the user opts into sound */}
+          {/* Play-with-sound button, shown until the user opts into sound */}
           {!withSound && (
             <button
               type="button"

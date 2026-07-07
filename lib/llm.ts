@@ -1,8 +1,8 @@
 // Central LLM client with provider failover so a single provider's rate limit or
 // outage never breaks the agent. Chain, in priority order:
-//   1. Groq   — fast, free (primary)
-//   2. Google — Gemini via its OpenAI-compatible endpoint (fallback on 429/error)
-//   3. Ollama — local, no key, no rate limit (offline last resort)
+//   1. Groq  , fast, free (primary)
+//   2. Google, Gemini via its OpenAI-compatible endpoint (fallback on 429/error)
+//   3. Ollama, local, no key, no rate limit (offline last resort)
 // Every provider speaks the OpenAI /chat/completions shape, so one code path covers
 // all three. On HTTP 429 we wait out the window once, then fail over to the next
 // provider rather than hammering a capped bucket.
@@ -39,7 +39,7 @@ function coolDown(name: string) {
 }
 
 /** The active provider chain (only providers that are configured AND not cooling down).
- *  The last configured provider is always kept even if cooling — a degraded provider
+ *  The last configured provider is always kept even if cooling, a degraded provider
  *  beats no answer at all. */
 function providerChain(): Provider[] {
   const all: Provider[] = [];
@@ -93,7 +93,7 @@ export async function chatComplete(messages: ChatMsg[], opts: ChatOpts = {}): Pr
 
         if (res.status === 429) {
           // Rate-limited (e.g. Groq daily token cap): DON'T burn time retrying a
-          // capped bucket — cool the provider down and fail over immediately so the
+          // capped bucket, cool the provider down and fail over immediately so the
           // next provider (Ollama) answers now, and later calls skip this one entirely.
           coolDown(p.name);
           lastErr = new Error(`${p.name} rate-limited (429)`);

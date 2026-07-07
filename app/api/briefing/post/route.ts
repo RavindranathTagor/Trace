@@ -31,6 +31,6 @@ export async function POST(req: NextRequest) {
     ok: anySent || !anyTarget,
     delivered: result,
     cards: cards.length,
-    note: anyTarget ? undefined : "No channels connected — connect Discord, Slack, or Teams first.",
+    note: anyTarget ? undefined : "No channels connected, connect Discord, Slack, or Teams first.",
   });
 }

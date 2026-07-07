@@ -2,7 +2,7 @@ import type { GraphNode } from "@/lib/types";
 
 // Decide which graph nodes to light up for a given answer/context by matching the
 // nodes' labels against the text. This is robust for BOTH the mock graph and live
-// Cognee (where the search response doesn't carry our node ids) — whatever the
+// Cognee (where the search response doesn't carry our node ids), whatever the
 // agent says, the entities it mentions glow in the graph.
 export function nodeIdsInText(nodes: GraphNode[], text: string, max = 14): string[] {
   if (!text) return [];

@@ -27,22 +27,22 @@ function verifySlackSignature(raw: string, ts: string | null, sig: string | null
   }
 }
 
-// POST /api/slack/events — Slack Events API. Handles the one-time URL-verification
+// POST /api/slack/events, Slack Events API. Handles the one-time URL-verification
 // challenge, then ingests channel messages and posts a cited drift alert back into
 // the thread (same guardian behavior as the Discord bot). Responds in <3s (Slack's
 // requirement) and does the guard work in the background.
 export async function POST(req: NextRequest) {
-  // Read the RAW body first — signature verification must run over the exact bytes.
+  // Read the RAW body first, signature verification must run over the exact bytes.
   const raw = await req.text();
 
   // Authenticate the request when a signing secret is configured. If it's unset we
-  // fail open (dev/hackathon setup) but warn loudly — set SLACK_SIGNING_SECRET in prod.
+  // fail open (dev/hackathon setup) but warn loudly, set SLACK_SIGNING_SECRET in prod.
   const secret = process.env.SLACK_SIGNING_SECRET;
   if (secret) {
     const ok = verifySlackSignature(raw, req.headers.get("x-slack-request-timestamp"), req.headers.get("x-slack-signature"), secret);
     if (!ok) return NextResponse.json({ error: "invalid signature" }, { status: 401 });
   } else {
-    console.warn("[slack] SLACK_SIGNING_SECRET not set — accepting UNVERIFIED events (dev only)");
+    console.warn("[slack] SLACK_SIGNING_SECRET not set, accepting UNVERIFIED events (dev only)");
   }
 
   let payload: {
@@ -108,7 +108,7 @@ async function handleSlackMention(text: string, user: string | undefined, channe
   }
   // Discord-style reply: post INLINE in the channel (no thread) with the asker's
   // question quoted as the reply reference, then the clean answer. No "*Trace*"
-  // header — Slack already shows the bot's name + avatar, just like Discord.
+  // header, Slack already shows the bot's name + avatar, just like Discord.
   const reference = `> ${user ? `<@${user}> ` : ""}${query}`;
   await slackPost(channel, `${reference}\n${answer}`);
 }
@@ -119,9 +119,9 @@ async function handleSlackMessage(text: string, user: string | undefined, channe
     const alert = await checkMessage(text, user ? `<@${user}>` : undefined);
     if (alert && channel) {
       // Discord-style inline reply: quote the message that triggered it, then the
-      // cited prior decision — posted inline in the channel (no thread wrap).
+      // cited prior decision, posted inline in the channel (no thread wrap).
       const reference = `> ${user ? `<@${user}> ` : ""}${text.slice(0, 220)}`;
-      const cite = `> ${alert.prior.quote}${alert.prior.who ? ` — ${alert.prior.who}` : ""}`;
+      const cite = `> ${alert.prior.quote}${alert.prior.who ? `, ${alert.prior.who}` : ""}`;
       const body = `${reference}\n⚠️ *Trace · ${alert.headline}*\nThis may reverse an earlier decision:\n${cite}\n${alert.why}`;
       await slackPost(channel, body);
     }

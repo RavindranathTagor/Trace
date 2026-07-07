@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-// A live, demoable window into the Company Brain API (/api/brain) — the endpoint an
+// A live, demoable window into the Company Brain API (/api/brain), the endpoint an
 // AI agent calls before it acts. Shows the structured answer + facts so a judge can
 // see "agents consult the company's live decisions," not just read about it.
 

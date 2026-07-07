@@ -87,7 +87,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
     }
   }, []);
 
-  // The confirmation-loop scoreboard — refetched after every grade so it climbs live.
+  // The confirmation-loop scoreboard, refetched after every grade so it climbs live.
   const loadStats = useCallback(async () => {
     try {
       const res = await fetch("/api/pulse/feedback", { cache: "no-store" });
@@ -143,7 +143,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
     const intro =
       count > 0
         ? `Good morning. ${count} thing${count === 1 ? "" : "s"} your company doesn't know yet. `
-        : "Good morning. Nothing new surfaced today — you're in the clear.";
+        : "Good morning. Nothing new surfaced today, you're in the clear.";
     const body = cards.map((c, i) => `${ordinals[i] ?? "Next"}. ${c.title}. ${c.detail} ${c.soWhat}`).join(" ");
     const u = new SpeechSynthesisUtterance(intro + body);
     u.rate = 1.03;
@@ -170,7 +170,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
               ? "Scanning your team's memory…"
               : count > 0
                 ? `${count} thing${count === 1 ? "" : "s"} your company doesn't know yet`
-                : "Nothing new surfaced — you're in the clear"}
+                : "Nothing new surfaced, you're in the clear"}
           </h1>
           <div className="flex shrink-0 gap-2">
             {count > 0 && !loading && (
@@ -266,7 +266,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
                         {s.quote}
                         {(s.who || s.when) && (
                           <span className="ml-2 whitespace-nowrap text-[11px] text-faint">
-                            — {[s.who, s.when].filter(Boolean).join(" · ")}
+                           , {[s.who, s.when].filter(Boolean).join(" · ")}
                           </span>
                         )}
                       </div>
@@ -291,8 +291,8 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
                     <span className="flex items-center gap-1.5 text-xs text-faint">
                       {verdict === "confirmed" ? <IconCheckG className="h-3.5 w-3.5" /> : <IconXG className="h-3.5 w-3.5" />}
                       {verdict === "confirmed"
-                        ? "Confirmed — Trace will remember this matters."
-                        : "Dismissed — Trace won't raise this again."}
+                        ? "Confirmed, Trace will remember this matters."
+                        : "Dismissed, Trace won't raise this again."}
                     </span>
                   ) : (
                     <>
@@ -300,7 +300,7 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
                         type="button"
                         onClick={() => void grade(card, "confirmed")}
                         className="btn-ghost text-accent"
-                        title="This is a real, useful catch. Trace reinforces it in memory — raising its precision score."
+                        title="This is a real, useful catch. Trace reinforces it in memory, raising its precision score."
                       >
                         <IconCheckG className="h-3.5 w-3.5" /> Confirm
                       </button>
@@ -329,13 +329,13 @@ export default function DigestFeed({ onCiteNodes, nodeCount = 0 }: { onCiteNodes
   );
 }
 
-/** The confirmation-loop scoreboard — the moat, made visible. Climbs as you grade. */
+/** The confirmation-loop scoreboard, the moat, made visible. Climbs as you grade. */
 function PrecisionMeter({ stats }: { stats: Stats | null }) {
   if (!stats) return null;
   const { confirmed, dismissed, graded, precision } = stats;
   if (graded === 0) {
     return (
-      <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] text-faint" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }} title="Confirm or dismiss findings — Trace's precision improves as you grade">
+      <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] text-faint" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }} title="Confirm or dismiss findings, Trace's precision improves as you grade">
         <IconTarget className="h-3.5 w-3.5" /> Precision · grade findings to train Trace
       </span>
     );
@@ -346,7 +346,7 @@ function PrecisionMeter({ stats }: { stats: Stats | null }) {
     <span
       className="flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-medium"
       style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }}
-      title={`${confirmed} confirmed · ${dismissed} dismissed — precision = confirmed ÷ graded, and it climbs as the team trains Trace`}
+      title={`${confirmed} confirmed · ${dismissed} dismissed, precision = confirmed ÷ graded, and it climbs as the team trains Trace`}
     >
       <IconTarget className="h-3.5 w-3.5" />
       <span className="text-dim">Precision</span>
@@ -359,7 +359,7 @@ function PrecisionMeter({ stats }: { stats: Stats | null }) {
   );
 }
 
-/** Per-finding confidence as a small donut ring — green ≥85%, amber ≥70%, muted below. */
+/** Per-finding confidence as a small donut ring, green ≥85%, amber ≥70%, muted below. */
 function ConfidenceMeter({ value }: { value: number }) {
   const pct = Math.max(0, Math.min(100, Math.round((value ?? 0) * 100)));
   const color = pct >= 85 ? "oklch(0.5 0.13 155)" : pct >= 70 ? "var(--signal)" : "var(--ink-faint)";
@@ -377,7 +377,7 @@ function ConfidenceMeter({ value }: { value: number }) {
   );
 }
 
-/** What Trace is currently watching — cheap proof it's a real, connected product. */
+/** What Trace is currently watching, cheap proof it's a real, connected product. */
 function SourceCoverage({ coverage, nodeCount }: { coverage: { channels: number; repos: number } | null; nodeCount: number }) {
   const parts: string[] = [];
   if (coverage) {

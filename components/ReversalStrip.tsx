@@ -72,7 +72,7 @@ function dotBg(d: Decision): string {
   return "var(--accent)";
 }
 
-/** A tiny before→after timeline for a single reversal — drop it in a drift card. */
+/** A tiny before→after timeline for a single reversal, drop it in a drift card. */
 export function MiniReversal({
   before,
   after,

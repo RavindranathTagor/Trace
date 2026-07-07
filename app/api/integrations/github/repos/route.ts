@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
         cache: "no-store",
       });
       if (!r.ok) {
-        const error = r.status === 401 ? "Token rejected (401) — check the PAT." : `GitHub returned ${r.status}.`;
+        const error = r.status === 401 ? "Token rejected (401), check the PAT." : `GitHub returned ${r.status}.`;
         return NextResponse.json({ error }, { status: r.status === 401 ? 401 : 502 });
       }
       const batch = (await r.json()) as { full_name: string; private: boolean }[];

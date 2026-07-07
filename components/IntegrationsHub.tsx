@@ -29,9 +29,9 @@ const STEPS: Record<string, { how: string[]; use: string; link: { url: string; l
       "Paste the token here and Connect.",
       "Click “Invite the bot” and pick your server.",
       "Set a Channel ID to ALSO receive briefings there (no webhook needed).",
-      "Press “Start agent” — Trace backfills then watches live.",
+      "Press “Start agent”, Trace backfills then watches live.",
     ],
-    use: "Reads messages and replies in-thread on drift; @mention it to ask. The Channel ID doubles as the briefing target — leave blank to watch all channels but note briefings need one set.",
+    use: "Reads messages and replies in-thread on drift; @mention it to ask. The Channel ID doubles as the briefing target, leave blank to watch all channels but note briefings need one set.",
   },
   github: {
     link: { url: "https://github.com/settings/personal-access-tokens", label: "GitHub → Fine-grained tokens" },
@@ -39,9 +39,9 @@ const STEPS: Record<string, { how: string[]; use: string; link: { url: string; l
       "Create a fine-grained PAT (Pull requests: Read+Write) in GitHub settings.",
       "Enter the repo as owner/name.",
       "Paste your public URL (a Cloudflare/ngrok tunnel to this app).",
-      "Connect — Trace auto-creates the webhook for you.",
+      "Connect, Trace auto-creates the webhook for you.",
     ],
-    use: "Open a PR that reverses a past decision — Trace comments on it with the earlier call and who made it.",
+    use: "Open a PR that reverses a past decision, Trace comments on it with the earlier call and who made it.",
   },
   slack: {
     link: { url: "https://api.slack.com/apps", label: "Slack → Your Apps" },
@@ -51,7 +51,7 @@ const STEPS: Record<string, { how: string[]; use: string; link: { url: string; l
       "Invite the bot to the channel, paste the bot token + Channel ID here → Connect two-way.",
       "POST-ONLY (briefings only): instead create an Incoming Webhook (api.slack.com/messaging/webhooks) and paste its URL.",
     ],
-    use: "A webhook is POST-ONLY — it can push briefings but CANNOT reply to @mentions. For questions & drift replies you MUST use a bot token + Events API on a public tunnel.",
+    use: "A webhook is POST-ONLY, it can push briefings but CANNOT reply to @mentions. For questions & drift replies you MUST use a bot token + Events API on a public tunnel.",
   },
   teams: {
     link: { url: "https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook", label: "Teams → Add an Incoming Webhook" },
@@ -172,9 +172,9 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
 
       {tab === "brain" ? (
         <div className="space-y-5">
-          {/* Company Brain API — the agent-facing endpoint, live and demoable */}
+          {/* Company Brain API, the agent-facing endpoint, live and demoable */}
           <BrainApiCard />
-          {/* Pre-code context pack — what every coding agent gets before it writes code */}
+          {/* Pre-code context pack, what every coding agent gets before it writes code */}
           <BrainContextCard />
         </div>
       ) : (
@@ -184,7 +184,7 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
         <span>New here? Hover the <InfoDot /> on any tool for step-by-step setup. Two-way agents (Discord, GitHub) catch drift live; Slack &amp; Teams receive briefings.</span>
       </p>
 
-      {/* Connect your tools — 2-up grid so it reads as a set, not a long column */}
+      {/* Connect your tools, 2-up grid so it reads as a set, not a long column */}
       <div className="text-[11px] font-semibold uppercase tracking-wide text-faint">Channels &amp; repos</div>
       <div className="grid gap-4 sm:grid-cols-2">
       {/* Discord */}
@@ -198,19 +198,19 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
               </a>
             )}
             <div className="flex gap-2">
-              <input className="input flex-1" placeholder="Channel ID — watched + briefing target (blank = all)" value={dChannel || s.discord.channelId} onChange={(e) => setDChannel(e.target.value)} />
-              <button type="button" className="btn shrink-0" disabled={busy === "d"} onClick={() => run("d", () => jpost("/api/integrations/discord", { channelId: dChannel || s.discord.channelId || "" }), "Channel saved — briefings will post here (no webhook needed).")}>
+              <input className="input flex-1" placeholder="Channel ID, watched + briefing target (blank = all)" value={dChannel || s.discord.channelId} onChange={(e) => setDChannel(e.target.value)} />
+              <button type="button" className="btn shrink-0" disabled={busy === "d"} onClick={() => run("d", () => jpost("/api/integrations/discord", { channelId: dChannel || s.discord.channelId || "" }), "Channel saved, briefings will post here (no webhook needed).")}>
                 Save
               </button>
             </div>
-            <p className="text-[11px] text-faint">The channel ID is where briefings post — no webhook needed for Discord.</p>
+            <p className="text-[11px] text-faint">The channel ID is where briefings post, no webhook needed for Discord.</p>
             <div className="flex gap-2">
               {running ? (
                 <button type="button" className="btn flex-1" disabled={busy === "d"} onClick={() => run("d", () => jpost("/api/integrations/discord", { channelId: dChannel || s.discord.channelId, action: "stop" }), "Agent stopped.")}>
                   Stop agent
                 </button>
               ) : (
-                <button type="button" className="btn-primary flex-1" disabled={busy === "d"} onClick={() => run("d", () => jpost("/api/integrations/discord", { channelId: dChannel || s.discord.channelId, action: "start" }), "Agent started — backfilling & watching.")}>
+                <button type="button" className="btn-primary flex-1" disabled={busy === "d"} onClick={() => run("d", () => jpost("/api/integrations/discord", { channelId: dChannel || s.discord.channelId, action: "start" }), "Agent started, backfilling & watching.")}>
                   {busy === "d" ? "Starting…" : "Start agent"}
                 </button>
               )}
@@ -231,7 +231,7 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
               <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">discord.com/developers</a>, enable the Message Content Intent, and paste its token.
             </p>
             <input className="input" placeholder="Discord bot token" value={dToken} onChange={(e) => setDToken(e.target.value)} />
-            <button type="button" className="btn-primary w-full" disabled={busy === "d" || !dToken.trim()} onClick={() => run("d", () => jpost("/api/integrations/discord", { token: dToken.trim(), channelId: dChannel.trim() }), "Connected — now invite the bot to your server.")}>
+            <button type="button" className="btn-primary w-full" disabled={busy === "d" || !dToken.trim()} onClick={() => run("d", () => jpost("/api/integrations/discord", { token: dToken.trim(), channelId: dChannel.trim() }), "Connected, now invite the bot to your server.")}>
               {busy === "d" ? "Connecting…" : "Connect Discord"}
             </button>
           </div>
@@ -243,7 +243,7 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
         {s?.github.configured ? (
           <div className="space-y-2.5">
             <Row label="Repo" value={s.github.repo} />
-            <Row label="Webhook" value={s.github.webhookId ? `#${s.github.webhookId} · auto-created` : "—"} />
+            <Row label="Webhook" value={s.github.webhookId ? `#${s.github.webhookId} · auto-created` : "-"} />
             <button type="button" className="btn-ghost" onClick={() => run("gh", () => jpost("/api/integrations/github", undefined, "DELETE"), "Disconnected & webhook removed.")}>
               Disconnect
             </button>
@@ -269,7 +269,7 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
               </div>
             ) : (
               <div className="flex gap-2">
-                <input className="input flex-1" placeholder="Repo — owner/name" value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} />
+                <input className="input flex-1" placeholder="Repo, owner/name" value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} />
                 <button type="button" className="btn shrink-0" disabled={!ghToken.trim() || loadingRepos} title="List repositories this token can access" onClick={loadRepos}>
                   {loadingRepos ? "Loading…" : "Load my repos"}
                 </button>
@@ -277,7 +277,7 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
             )}
 
             <input className="input" placeholder="Public URL (your tunnel, https://…)" value={ghUrl} onChange={(e) => setGhUrl(e.target.value)} />
-            <button type="button" className="btn-primary w-full" disabled={busy === "gh" || !ghToken.trim() || !ghRepo.trim() || !ghUrl.trim()} onClick={() => run("gh", () => jpost("/api/integrations/github", { token: ghToken.trim(), repo: ghRepo.trim(), publicUrl: ghUrl.trim() }), "Connected — webhook created. Open a PR to test.")}>
+            <button type="button" className="btn-primary w-full" disabled={busy === "gh" || !ghToken.trim() || !ghRepo.trim() || !ghUrl.trim()} onClick={() => run("gh", () => jpost("/api/integrations/github", { token: ghToken.trim(), repo: ghRepo.trim(), publicUrl: ghUrl.trim() }), "Connected, webhook created. Open a PR to test.")}>
               {busy === "gh" ? "Creating webhook…" : "Connect GitHub"}
             </button>
           </div>
@@ -292,11 +292,11 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
             {s.slack.mode !== "two-way" && (
               <div className="space-y-2 rounded-lg p-2.5" style={{ background: "color-mix(in oklab, var(--signal) 10%, transparent)", border: "1px solid color-mix(in oklab, var(--signal) 30%, transparent)" }}>
                 <p className="text-[12px] text-dim">
-                  <span className="font-semibold text-ink">Want @mention replies?</span> A webhook is post-only — it can&apos;t reply. Add a bot token + channel for two-way.
+                  <span className="font-semibold text-ink">Want @mention replies?</span> A webhook is post-only, it can&apos;t reply. Add a bot token + channel for two-way.
                 </p>
                 <input className="input" placeholder="Bot token (xoxb-…)" value={slBot} onChange={(e) => setSlBot(e.target.value)} />
                 <input className="input" placeholder="Channel ID (e.g. C0123ABC)" value={slChannel} onChange={(e) => setSlChannel(e.target.value)} />
-                <button type="button" className="btn-primary w-full" disabled={busy === "sl" || !slBot.trim() || !slChannel.trim()} onClick={() => run("sl", () => jpost("/api/integrations/slack", { botToken: slBot.trim(), channel: slChannel.trim() }), "Two-way enabled — mention the bot to test.")}>
+                <button type="button" className="btn-primary w-full" disabled={busy === "sl" || !slBot.trim() || !slChannel.trim()} onClick={() => run("sl", () => jpost("/api/integrations/slack", { botToken: slBot.trim(), channel: slChannel.trim() }), "Two-way enabled, mention the bot to test.")}>
                   {busy === "sl" ? "Enabling…" : "Enable two-way"}
                 </button>
               </div>
@@ -308,7 +308,7 @@ export default function IntegrationsHub({ onIngested }: { onIngested: () => void
         ) : (
           <div className="space-y-3">
             <div className="space-y-2">
-              <p className="text-[12px] font-medium text-ink">Two-way — reply to @mentions + drift + briefings</p>
+              <p className="text-[12px] font-medium text-ink">Two-way, reply to @mentions + drift + briefings</p>
               <input className="input" placeholder="Bot token (xoxb-…)" value={slBot} onChange={(e) => setSlBot(e.target.value)} />
               <input className="input" placeholder="Channel ID (e.g. C0123ABC)" value={slChannel} onChange={(e) => setSlChannel(e.target.value)} />
               <button type="button" className="btn-primary w-full" disabled={busy === "sl" || !slBot.trim() || !slChannel.trim()} onClick={() => run("sl", () => jpost("/api/integrations/slack", { botToken: slBot.trim(), channel: slChannel.trim() }), "Slack connected (two-way). Point the Events API at /api/slack/events.")}>

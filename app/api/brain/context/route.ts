@@ -14,8 +14,8 @@ export const dynamic = "force-dynamic";
 //
 // The COMPANY BRAIN pre-code context pack. A coding agent (Claude Code / Cursor /
 // Copilot / Aider / Windsurf) calls this BEFORE it writes code and gets the org's
-// live memory — architecture constraints, conventions, past mistakes, rejected
-// designs, known bugs, and current ownership — so every agent shares one memory and
+// live memory, architecture constraints, conventions, past mistakes, rejected
+// designs, known bugs, and current ownership, so every agent shares one memory and
 // stops reintroducing things the team already ruled out.
 //
 // Derived instantly from the decision ledger (Cloud-independent), enriched best-effort
@@ -79,7 +79,7 @@ function buildLedgerPack(topic: string) {
   return { architectureConstraints, conventions, pastMistakes, rejectedDesigns, ownership: Array.from(ownershipMap.values()) };
 }
 
-/** seed + open GitHub issues + Cognee-derived caveats — all fail-soft, bounded. */
+/** seed + open GitHub issues + Cognee-derived caveats, all fail-soft, bounded. */
 async function gatherBugs(topic: string): Promise<KnownIssue[]> {
   const t = topic.toLowerCase();
   const seed = KNOWN_ISSUES.filter((b) => !t || `${b.area} ${b.issue}`.toLowerCase().includes(t));
@@ -162,12 +162,12 @@ export async function GET(req: NextRequest) {
 // ── rules / markdown rendering ────────────────────────────────────────────────
 function renderRules(p: Pack, target: string): string {
   const header: Record<string, string> = {
-    md: "## Company Brain — org context (from Trace)",
-    cursor: "# Cursor rules — generated from the Trace company brain. Do not edit by hand.",
-    copilot: "# Copilot instructions — generated from the Trace company brain. Do not edit by hand.",
-    claude: "# CLAUDE.md — generated from the Trace company brain. Do not edit by hand.",
-    agents: "# AGENTS.md — generated from the Trace company brain. Do not edit by hand.",
-    aider: "# Conventions — generated from the Trace company brain. Do not edit by hand.",
+    md: "## Company Brain, org context (from Trace)",
+    cursor: "# Cursor rules, generated from the Trace company brain. Do not edit by hand.",
+    copilot: "# Copilot instructions, generated from the Trace company brain. Do not edit by hand.",
+    claude: "# CLAUDE.md, generated from the Trace company brain. Do not edit by hand.",
+    agents: "# AGENTS.md, generated from the Trace company brain. Do not edit by hand.",
+    aider: "# Conventions, generated from the Trace company brain. Do not edit by hand.",
   };
   const L: string[] = [header[target] ?? header.md, "", "> Consult this before writing code. It is the team's live, cited memory.", ""];
 
@@ -182,18 +182,18 @@ function renderRules(p: Pack, target: string): string {
     L.push("");
   }
   if (p.pastMistakes.length) {
-    L.push("### Past mistakes — do NOT repeat");
+    L.push("### Past mistakes, do NOT repeat");
     p.pastMistakes.forEach((m) => L.push(`- Tried **${m.tried}** → reverted to **${m.revertedTo}** (${m.when}). Why: ${m.why}`));
     L.push("");
   }
   if (p.rejectedDesigns.length) {
     L.push("### Rejected designs");
-    p.rejectedDesigns.forEach((d) => L.push(`- **${d.design}**${d.rejectedFor ? ` — rejected for ${d.rejectedFor}` : ""}. ${d.why}`));
+    p.rejectedDesigns.forEach((d) => L.push(`- **${d.design}**${d.rejectedFor ? `, rejected for ${d.rejectedFor}` : ""}. ${d.why}`));
     L.push("");
   }
   if (p.knownBugs.length) {
     L.push("### Known bugs / gotchas");
-    p.knownBugs.forEach((b) => L.push(`- [${b.severity}] **${b.area}**: ${b.issue} — _workaround:_ ${b.workaround} (${b.source})`));
+    p.knownBugs.forEach((b) => L.push(`- [${b.severity}] **${b.area}**: ${b.issue}, _workaround:_ ${b.workaround} (${b.source})`));
     L.push("");
   }
   if (p.ownership.length) {

@@ -71,7 +71,7 @@ export default function GitHubDrift() {
       {alerts.length === 0 ? (
         <div className="card flex items-center gap-2 p-4 text-xs text-dim">
           <GitHubMark className="h-4 w-4 shrink-0 opacity-50" />
-          Watching your connected repos — a pull request that reverses a past decision will appear here.
+          Watching your connected repos, a pull request that reverses a past decision will appear here.
         </div>
       ) : (
         <div className="space-y-2.5">
@@ -126,7 +126,7 @@ export default function GitHubDrift() {
               >
                 “{a.prior.quote.slice(0, 180)}”
                 {(a.prior.who || a.prior.when) && (
-                  <span className="text-faint"> — {[a.prior.who, a.prior.when].filter(Boolean).join(", ")}</span>
+                  <span className="text-faint">, {[a.prior.who, a.prior.when].filter(Boolean).join(", ")}</span>
                 )}
               </blockquote>
 

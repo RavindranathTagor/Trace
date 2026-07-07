@@ -7,7 +7,7 @@ import { config } from "@/lib/config";
 
 // globalThis-backed: Next.js bundles each API route separately, so a plain
 // module-level `let` would give /api/models (writer) and /api/recall (reader)
-// DIFFERENT instances — the dropdown would silently do nothing.
+// DIFFERENT instances, the dropdown would silently do nothing.
 const g = globalThis as unknown as { __traceModel?: { selected: string } };
 const state = (g.__traceModel ??= { selected: config.baseline.model });
 

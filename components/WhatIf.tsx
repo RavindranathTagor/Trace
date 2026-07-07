@@ -62,7 +62,7 @@ export default function WhatIf({ graphNodes }: { graphNodes: GraphNode[] }) {
       </div>
       <h1 className="mt-2.5 text-balance text-[26px] font-semibold leading-tight text-ink">What happens if someone leaves?</h1>
       <p className="mt-2 text-xs text-faint">
-        A grounded projection from the memory graph — every consequence cited, nothing invented.
+        A grounded projection from the memory graph, every consequence cited, nothing invented.
       </p>
 
       <form
@@ -72,7 +72,7 @@ export default function WhatIf({ graphNodes }: { graphNodes: GraphNode[] }) {
         }}
         className="mt-5 flex gap-2"
       >
-        <input value={person} onChange={(e) => setPerson(e.target.value)} placeholder="Type a name — e.g. Priya" className="input" aria-label="Person" />
+        <input value={person} onChange={(e) => setPerson(e.target.value)} placeholder="Type a name, e.g. Priya" className="input" aria-label="Person" />
         <button type="submit" className="btn-primary shrink-0" disabled={loading || !person.trim()}>
           {loading ? "Projecting…" : "Project impact"}
         </button>
@@ -104,7 +104,7 @@ export default function WhatIf({ graphNodes }: { graphNodes: GraphNode[] }) {
           {result.items.length === 0 ? (
             <div className="card p-6 text-center text-sm text-dim">
               {result.degraded
-                ? `No grounded impact — ${result.degraded}.`
+                ? `No grounded impact, ${result.degraded}.`
                 : `Nothing in memory shows ${result.person} as a single point of failure. That's good news.`}
             </div>
           ) : (
@@ -138,7 +138,7 @@ export default function WhatIf({ graphNodes }: { graphNodes: GraphNode[] }) {
                         <div key={j} className="evidence">
                           {s.quote}
                           {(s.who || s.when) && (
-                            <span className="ml-2 text-[11px] text-faint">— {[s.who, s.when].filter(Boolean).join(" · ")}</span>
+                            <span className="ml-2 text-[11px] text-faint">- {[s.who, s.when].filter(Boolean).join(" · ")}</span>
                           )}
                         </div>
                       ))}

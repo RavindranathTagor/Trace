@@ -1,6 +1,6 @@
 "use client";
 
-// Mini, real-looking interface cards the guide agent shows during the tour — so
+// Mini, real-looking interface cards the guide agent shows during the tour, so
 // the tutorial demonstrates what Trace actually does, visually.
 import { GitHubLogo, DiscordLogo, SlackLogo } from "@/components/Logos";
 import { TraceMark } from "@/components/TraceMark";
@@ -13,7 +13,7 @@ function TraceStamp() {
   );
 }
 
-/** A GitHub PR with Trace's drift comment — the cross-source catch. */
+/** A GitHub PR with Trace's drift comment, the cross-source catch. */
 export function MockGitHubPR() {
   return (
     <div className="overflow-hidden rounded-xl text-[11px]" style={{ border: "1px solid var(--line)", background: "var(--surface)" }}>
@@ -33,7 +33,7 @@ export function MockGitHubPR() {
           <div className="mt-1.5 leading-snug text-dim">
             ⚠️ This PR may reverse an earlier decision:
             <div className="mt-1 rounded px-2 py-1 italic" style={{ background: "var(--surface-2)", borderLeft: "2px solid var(--line-strong)" }}>
-              &ldquo;we&apos;re standardizing all new services on PostgreSQL&rdquo; — priya, Q1
+              &ldquo;we&apos;re standardizing all new services on PostgreSQL&rdquo;, priya, Q1
             </div>
           </div>
         </div>
@@ -62,7 +62,7 @@ export function MockDiscord() {
           <TraceStamp />
           <div>
             <div><span className="font-semibold text-ink">Trace</span> <span className="text-faint">10:24 · replying</span></div>
-            <div className="text-dim">⚠️ Heads up @karthik — this reverses the Q1 call to standardize on PostgreSQL. <span className="text-faint">(priya)</span></div>
+            <div className="text-dim">⚠️ Heads up @karthik, this reverses the Q1 call to standardize on PostgreSQL. <span className="text-faint">(priya)</span></div>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ export function MockSlack() {
   );
 }
 
-/** A self-animating mini decision graph — nodes light up and an edge pulses, so
+/** A self-animating mini decision graph, nodes light up and an edge pulses, so
  *  the tour shows the "graph lights up the subgraph it traversed" idea in motion. */
 export function MiniGraphAnim() {
   // deterministic layout; SMIL animates opacity + a travelling pulse

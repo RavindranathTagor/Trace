@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 // POST /api/integrations/teams { webhookUrl }
 // Microsoft Teams: paste a channel's Incoming Webhook URL to receive briefings.
-// (Ingesting Teams messages needs the Bot Framework adapter — see adapters/teams.)
+// (Ingesting Teams messages needs the Bot Framework adapter, see adapters/teams.)
 export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => ({}))) as { webhookUrl?: string };
   const webhookUrl = body.webhookUrl?.trim();

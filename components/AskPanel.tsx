@@ -37,7 +37,7 @@ function suggestionsFromGraph(nodes: GraphNode[]): string[] {
   return out.slice(0, 4);
 }
 
-/** Under an answer: if it touches decisions in the ledger, show their timeline —
+/** Under an answer: if it touches decisions in the ledger, show their timeline -
  *  and if one reversed another, the before→after. Ties every answer to time. */
 function RelatedTimeline({ text }: { text: string }) {
   const related = useMemo(() => decisionsForText(text), [text]);
@@ -137,7 +137,7 @@ export default function AskPanel({ onHighlight, graphNodes }: AskPanelProps) {
         {!hasAnswer && (
           <div className="space-y-3 pt-1">
             <p className="text-xs leading-relaxed text-dim">
-              Ask anything your team decided — type here, or switch to Voice above.
+              Ask anything your team decided, type here, or switch to Voice above.
             </p>
             <div className="flex flex-wrap gap-1.5">
               {suggested.map((s) => (

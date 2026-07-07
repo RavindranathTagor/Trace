@@ -1,4 +1,4 @@
-// Notion-style spot illustrations — soft, friendly, two-tone (accent indigo +
+// Notion-style spot illustrations, soft, friendly, two-tone (accent indigo +
 // amber signal), theme-aware via CSS vars. Used in empty states and landing
 // sections to make the product feel warm and hand-made rather than clinical.
 
@@ -6,7 +6,7 @@ type Props = { className?: string };
 
 const wrap = "select-none";
 
-/** Empty decision graph waiting for a source — dashed canvas, faint nodes, an
+/** Empty decision graph waiting for a source, dashed canvas, faint nodes, an
  *  amber "+" invite, and Trace peeking in. For the graph/memory empty state. */
 export function IllusEmptyGraph({ className }: Props) {
   return (
@@ -38,7 +38,7 @@ export function IllusEmptyGraph({ className }: Props) {
   );
 }
 
-/** All-clear — a soft check shield with sparkles. For the "nothing surfaced" state. */
+/** All-clear, a soft check shield with sparkles. For the "nothing surfaced" state. */
 export function IllusAllClear({ className }: Props) {
   return (
     <svg viewBox="0 0 200 150" className={`${wrap} ${className ?? ""}`} role="img" aria-label="All clear">
@@ -56,7 +56,7 @@ export function IllusAllClear({ className }: Props) {
   );
 }
 
-/** Connect — two rounded plug pieces meeting with a spark. For the integrations header. */
+/** Connect, two rounded plug pieces meeting with a spark. For the integrations header. */
 export function IllusConnect({ className }: Props) {
   return (
     <svg viewBox="0 0 200 150" className={`${wrap} ${className ?? ""}`} role="img" aria-label="Connect your tools">
@@ -81,7 +81,7 @@ export function IllusConnect({ className }: Props) {
   );
 }
 
-/** Observe — radar rings sweeping channels. For the landing "observe" beat. */
+/** Observe, radar rings sweeping channels. For the landing "observe" beat. */
 export function IllusObserve({ className }: Props) {
   return (
     <svg viewBox="0 0 200 150" className={`${wrap} ${className ?? ""}`} role="img" aria-label="Trace observes your channels">
@@ -104,7 +104,7 @@ export function IllusObserve({ className }: Props) {
   );
 }
 
-/** Memory graph — a tidy little decision graph, the payoff. For landing. */
+/** Memory graph, a tidy little decision graph, the payoff. For landing. */
 export function IllusMemory({ className }: Props) {
   return (
     <svg viewBox="0 0 200 150" className={`${wrap} ${className ?? ""}`} role="img" aria-label="A living decision graph">

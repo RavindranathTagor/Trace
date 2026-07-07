@@ -1,12 +1,12 @@
 // Frontend-configurable integrations (Discord / GitHub / Slack), persisted to a
-// gitignored JSON file so a restart keeps connections. Tokens stay server-side —
+// gitignored JSON file so a restart keeps connections. Tokens stay server-side -
 // the GET API only ever returns redacted hints (last 4 chars).
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 export interface IntegrationsConfig {
-  // autoStart: the user pressed "Start agent" — so re-spawn the bot on server boot
+  // autoStart: the user pressed "Start agent", so re-spawn the bot on server boot
   // (a dev-server restart kills the child process; this makes it self-heal).
   discord: { token?: string; channelId?: string; autoStart?: boolean };
   github: { token?: string; repo?: string; publicUrl?: string; secret?: string; webhookId?: number };

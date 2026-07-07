@@ -1,4 +1,4 @@
-// Hindsight mark — a small knowledge-graph constellation (memory you can see).
+// Hindsight mark, a small knowledge-graph constellation (memory you can see).
 export default function Logo({ className = "h-5 w-5" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">

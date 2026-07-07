@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // POST /api/recall  { query, onlyContext? }
-// We ALWAYS retrieve from Cognee with only_context=true (reliable — no LLM
+// We ALWAYS retrieve from Cognee with only_context=true (reliable, no LLM
 // completion in Cognee, which can hang). Then:
 //   - onlyContext=true (voice tool): return the subgraph context; the ElevenLabs
 //     agent's own LLM speaks it.
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       // team…") is answerable via its chunk even when entity extraction didn't
       // mint a dedicated node for it.
       // Fast mode: skip Cognee retrieval (slow on a local Ollama-backed Cognee) and
-      // answer from the local memory snapshot via direct Ollama — keeps @mention
+      // answer from the local memory snapshot via direct Ollama, keeps @mention
       // replies snappy in the live demo.
       const fast = process.env.COGNEE_SKIP_COMPLETION === "true";
       let ctx: { context?: string; answer?: string } = {};
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       const answer = await composeAnswer(query, ctx);
       return NextResponse.json(
         redactRecall({
-          answer: answer || "I can't reach the team's memory right now — give me a few seconds and ask again.",
+          answer: answer || "I can't reach the team's memory right now, give me a few seconds and ask again.",
           context: ctx,
           nodeIds: [],
           sources: ctx.split("\n").filter(Boolean).slice(0, 3),

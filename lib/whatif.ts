@@ -1,10 +1,10 @@
-// Grounded "what-if" — the Digital Twin, done honestly.
+// Grounded "what-if", the Digital Twin, done honestly.
 //
 // "What happens if <person> leaves?" is answered by PROJECTION over real graph
 // evidence, never by fabricated Monte-Carlo numbers. We surface only consequences
 // traceable to actual messages: decisions they solely own, systems only they
 // touched, open commitments. Every item is cited. That is a live "simulation" a
-// technical judge can trust — because there is nothing invented to disbelieve.
+// technical judge can trust, because there is nothing invented to disbelieve.
 
 import { config, isBaselineEnabled } from "@/lib/config";
 import { searchChunks } from "@/lib/cognee";
@@ -62,7 +62,7 @@ HARD RULES:
 - NEVER invent facts, numbers, percentages, or consequences not supported by a quote.
 - Every item MUST cite the exact supporting quote(s).
 - "severity": high if others clearly depend on it or it is on the roadmap; else medium/low.
-- If the text does not support a real risk, return an empty items array — do not pad.
+- If the text does not support a real risk, return an empty items array, do not pad.
 Output STRICT JSON only:
 {"headline":"one line, e.g. If ${person} leaves, auth is orphaned","items":[{"label":"","detail":"","severity":"high","sources":[{"quote":"","who":"","when":""}]}]}
 No prose, no markdown.`;

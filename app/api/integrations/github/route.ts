@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 // POST /api/integrations/github { token, repo:"owner/name", publicUrl }
 // Saves the PAT + repo, then AUTO-CREATES the pull_request webhook on the repo
-// pointing at <publicUrl>/api/github/webhook with a generated HMAC secret — the
+// pointing at <publicUrl>/api/github/webhook with a generated HMAC secret, the
 // whole GitHub setup in one click (no manual webhook page).
 export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => ({}))) as { token?: string; repo?: string; publicUrl?: string };

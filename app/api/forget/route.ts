@@ -5,7 +5,7 @@ import { forget, clearForget, forgottenList } from "@/lib/forget";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// POST /api/forget  { target: "Project Atlas" }  — redact matching nodes.
+// POST /api/forget  { target: "Project Atlas" } , redact matching nodes.
 // { clear: true } resets the redaction list.
 export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => ({}))) as { target?: string; clear?: boolean };

@@ -42,7 +42,7 @@ function VoiceInner({ onHighlight, graphNodes }: VoiceAgentProps) {
   const [activity, setActivity] = useState<Activity[]>([]);
   const counter = useRef(0);
 
-  // Speech-synced "chain" reveal — light matched nodes one-by-one WHILE the agent
+  // Speech-synced "chain" reveal, light matched nodes one-by-one WHILE the agent
   // speaks, then reveal the rest when it stops. A steady ticker drives it so it
   // works regardless of exactly when isSpeaking toggles.
   const pendingRef = useRef<string[]>([]);
@@ -155,7 +155,7 @@ function VoiceInner({ onHighlight, graphNodes }: VoiceAgentProps) {
             {status === "error" ? (
               <span style={{ color: "var(--drift)" }}>{message || "Voice connection failed."}</span>
             ) : isSpeaking ? (
-              "Trace is answering — watch the graph light up."
+              "Trace is answering, watch the graph light up."
             ) : (
               "Ask: “What changed about pricing since Q1?”"
             )}

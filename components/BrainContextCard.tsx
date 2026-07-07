@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-// The "before-you-code" context pack — the Company Brain a coding agent consults
+// The "before-you-code" context pack, the Company Brain a coding agent consults
 // before it writes anything. Shows the live pack (constraints / mistakes / rejected /
 // bugs / ownership) and lets you copy it as a rules file, or grab the MCP config so
 // Claude Code / Cursor / Windsurf call it automatically.
@@ -94,7 +94,7 @@ export default function BrainContextCard() {
         <div className="mt-3.5 space-y-3">
           <Section title="Architecture constraints" tone="var(--accent)" items={pack.architectureConstraints.map((c) => `${c.rule} · ${c.owner}`)} />
           <Section title="Conventions" tone="var(--duplicate)" items={pack.conventions.map((c) => c.rule)} />
-          <Section title="Past mistakes — do not repeat" tone="var(--signal)" items={pack.pastMistakes.map((m) => `Tried ${m.tried} → ${m.revertedTo} (${m.when}) — ${m.why}`)} />
+          <Section title="Past mistakes, do not repeat" tone="var(--signal)" items={pack.pastMistakes.map((m) => `Tried ${m.tried} → ${m.revertedTo} (${m.when}), ${m.why}`)} />
           <Section title="Rejected designs" tone="var(--drift)" items={pack.rejectedDesigns.map((d) => `${d.design}${d.rejectedFor ? ` → replaced by ${d.rejectedFor}` : ""}`)} strike />
           <Section title="Known bugs" tone="var(--drift)" items={pack.knownBugs.map((b) => `[${b.severity}] ${b.area}: ${b.issue}`)} />
           <Section title="Ownership" tone="var(--ownership)" items={pack.ownership.map((o) => `${o.area} → ${o.owner}${o.risk !== "ok" ? ` ⚠️ ${o.risk}` : ""}`)} />

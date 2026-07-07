@@ -1,6 +1,6 @@
 // Thin Discord REST helpers (no gateway needed): derive the bot's application id
 // from its token (first token segment is base64 of the id), build an invite URL,
-// and post messages to a channel — used for the invite link and "post briefing".
+// and post messages to a channel, used for the invite link and "post briefing".
 
 export function botIdFromToken(token: string): string | null {
   try {

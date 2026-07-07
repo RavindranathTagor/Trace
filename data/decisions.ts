@@ -1,6 +1,6 @@
-// Nimbus — a realistic B2B SaaS startup's DECISION LEDGER (the "real startup data").
+// Nimbus, a realistic B2B SaaS startup's DECISION LEDGER (the "real startup data").
 // This is the structured, dated history the Timeline renders: real decisions, who
-// made them, why, the exact message they came from, and — the heart of it — which
+// made them, why, the exact message they came from, and, the heart of it, which
 // earlier decision each one REVERSED. Authored to match data/sampleMeetings.ts so
 // the graph (from Cognee) and the timeline tell the same story.
 //
@@ -40,7 +40,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     role: "PM",
     channel: "#product",
     why: "Aligns cost with value and lands usage-heavy enterprise accounts.",
-    sourceQuote: "Let's launch metered — customers only pay for what they use, it's the fairest model.",
+    sourceQuote: "Let's launch metered, customers only pay for what they use, it's the fairest model.",
     status: "superseded",
     tag: "pricing",
     graphTerms: ["pricing", "usage-based", "Ashwini"],
@@ -54,8 +54,8 @@ export const NIMBUS_DECISIONS: Decision[] = [
     owner: "Ashwini",
     role: "PM",
     channel: "#product",
-    why: "Usage-based drove 9% monthly churn — buyers wanted a predictable bill they could forecast.",
-    sourceQuote: "Metered is killing us — 9% churn. We're moving everyone to three flat tiers.",
+    why: "Usage-based drove 9% monthly churn, buyers wanted a predictable bill they could forecast.",
+    sourceQuote: "Metered is killing us, 9% churn. We're moving everyone to three flat tiers.",
     status: "current",
     reverses: "pricing-usage",
     tag: "pricing",
@@ -73,7 +73,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     role: "Infra",
     channel: "#eng",
     why: "Full control over tuning and no managed-service lock-in.",
-    sourceQuote: "We'll run our own Postgres on EC2 — gives us control and keeps costs down.",
+    sourceQuote: "We'll run our own Postgres on EC2, gives us control and keeps costs down.",
     status: "superseded",
     tag: "infra",
     graphTerms: ["Postgres", "self-managed", "Ravindra", "database"],
@@ -87,8 +87,8 @@ export const NIMBUS_DECISIONS: Decision[] = [
     owner: "Ravindra",
     role: "Infra",
     channel: "#eng",
-    why: "Two outages from manual failover and heavy on-call load — managed branching pays for itself.",
-    sourceQuote: "The on-call burden isn't worth it. Migrating to Neon — managed, branching, autoscaling.",
+    why: "Two outages from manual failover and heavy on-call load, managed branching pays for itself.",
+    sourceQuote: "The on-call burden isn't worth it. Migrating to Neon, managed, branching, autoscaling.",
     status: "current",
     reverses: "db-selfpg",
     tag: "infra",
@@ -105,7 +105,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     role: "Backend",
     channel: "#eng",
     why: "Flexible document schema while early services (billing, analytics) are still moving fast.",
-    sourceQuote: "Let's start new services on MongoDB — the schema keeps changing and migrations slow us down.",
+    sourceQuote: "Let's start new services on MongoDB, the schema keeps changing and migrations slow us down.",
     status: "superseded",
     tag: "infra",
     graphTerms: ["MongoDB", "Mongo", "schema", "database", "billing", "Sandesh"],
@@ -119,7 +119,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     owner: "Ravindra",
     role: "Infra",
     channel: "#eng",
-    why: "One database to operate, back up, and reason about — no more MongoDB for new services.",
+    why: "One database to operate, back up, and reason about, no more MongoDB for new services.",
     sourceQuote: "We are standardizing ALL new services on PostgreSQL. No more MongoDB for new services.",
     status: "current",
     reverses: "db-mongo",
@@ -127,7 +127,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     graphTerms: ["PostgreSQL", "Postgres", "MongoDB", "Mongo", "database", "billing", "standard", "Ravindra"],
   },
 
-  // ── Public API (a DOUBLE reversal — the dramatic one) ────────────────────
+  // ── Public API (a DOUBLE reversal, the dramatic one) ────────────────────
   {
     id: "api-rest1",
     lane: "Public API",
@@ -138,7 +138,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     role: "Head of Eng",
     channel: "#eng",
     why: "Simple, well-understood, fast to ship for launch.",
-    sourceQuote: "For v1 let's just do REST — everyone knows it, we can ship this sprint.",
+    sourceQuote: "For v1 let's just do REST, everyone knows it, we can ship this sprint.",
     status: "superseded",
     tag: "api",
     graphTerms: ["REST", "API", "Pushpa"],
@@ -186,8 +186,8 @@ export const NIMBUS_DECISIONS: Decision[] = [
     owner: "Ravindra",
     role: "Staff Eng",
     channel: "#eng",
-    why: "She built it end-to-end and iterates fastest — but she is the only one who understands it.",
-    sourceQuote: "Ravindra owns auth and billing security end to end — she's fastest on it.",
+    why: "She built it end-to-end and iterates fastest, but she is the only one who understands it.",
+    sourceQuote: "Ravindra owns auth and billing security end to end, she's fastest on it.",
     status: "at-risk",
     tag: "ownership",
     graphTerms: ["Ravindra", "auth", "billing", "security"],
@@ -218,7 +218,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     owner: "Pushpa",
     role: "Backend (Platform)",
     channel: "#platform",
-    why: "Needed durable retries for outbound events — unaware Payments already built one.",
+    why: "Needed durable retries for outbound events, unaware Payments already built one.",
     sourceQuote: "Starting on a generic retry queue for platform events.",
     status: "current",
     tag: "reliability",
@@ -236,7 +236,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     role: "CEO",
     channel: "#leadership",
     why: "Confidential strategic initiative (details restricted).",
-    sourceQuote: "Starting Project Atlas — keep this confidential for now.",
+    sourceQuote: "Starting Project Atlas, keep this confidential for now.",
     status: "current",
     confidential: true,
     tag: "company",
@@ -252,7 +252,7 @@ export const NIMBUS_DECISIONS: Decision[] = [
     role: "CEO",
     channel: "#leadership",
     why: "Enterprise deals now require it in security review.",
-    sourceQuote: "We're committing to SOC 2 Type II — it's blocking two enterprise deals.",
+    sourceQuote: "We're committing to SOC 2 Type II, it's blocking two enterprise deals.",
     status: "current",
     tag: "company",
     graphTerms: ["SOC 2", "compliance", "Ashwini"],
@@ -302,7 +302,7 @@ export function decisionsForLabel(label: string): Decision[] {
   ).sort((a, b) => decisionTime(a) - decisionTime(b));
 }
 
-/** Decisions referenced by a free-text answer/question — powers the "timeline
+/** Decisions referenced by a free-text answer/question, powers the "timeline
  *  behind the answer" strip under an Ask/Voice response. */
 export function decisionsForText(text: string): Decision[] {
   const q = (text || "").toLowerCase();

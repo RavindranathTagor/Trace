@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { TraceBot } from "@/components/TraceBot";
 
-// Trace's face on the Talk tab — the SAME character as the guide agent (glowing
+// Trace's face on the Talk tab, the SAME character as the guide agent (glowing
 // amber antenna, blinking eyes, side-bolts, body), lip-syncing to the live agent
 // audio (getOutputByteFrequencyData). Amplitude drives the mouth; while the agent
 // speaks a soft accent halo pulses behind it.

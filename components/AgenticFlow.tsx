@@ -44,7 +44,7 @@ export default function AgenticFlow() {
   return (
     <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl p-6 sm:p-8" style={{ border: "1px solid var(--line)", background: "linear-gradient(to bottom, var(--surface), var(--surface-2))", boxShadow: "var(--shadow-md)" }}>
       <div className="flex flex-col items-center">
-        {/* Stage 1 — the agents */}
+        {/* Stage 1, the agents */}
         <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-faint">AI coding agents</div>
         <div className="flex flex-wrap items-center justify-center gap-2">
           {AGENTS.map(({ slug, name }, i) => (
@@ -60,14 +60,14 @@ export default function AgenticFlow() {
 
         <Pipe />
 
-        {/* Stage 2 — the request */}
+        {/* Stage 2, the request */}
         <div className="trace-glow flex items-center gap-2 rounded-xl px-4 py-2.5 font-mono text-[13px] font-semibold" style={{ background: "var(--ink)", color: "var(--surface)" }}>
           <IconApi className="h-4 w-4" /> GET /api/brain/context
         </div>
 
         <Pipe />
 
-        {/* Stage 3 — what the brain returns */}
+        {/* Stage 3, what the brain returns */}
         <div className="w-full">
           <div className="mb-2.5 flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-faint">
             <span className="grid h-4 w-4 place-items-center rounded" style={{ background: "var(--accent-soft)" }}><TraceMark className="h-3 w-3" /></span>
@@ -88,7 +88,7 @@ export default function AgenticFlow() {
 
         <Pipe />
 
-        {/* Stage 4 — the payoff */}
+        {/* Stage 4, the payoff */}
         <div className="trace-glow flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold text-accent-ink" style={{ background: "var(--accent-soft)", border: "1px solid color-mix(in oklab, var(--accent) 30%, transparent)" }}>
           <IconShield className="h-4 w-4" /> Generate code that respects your history
         </div>

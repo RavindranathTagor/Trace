@@ -81,7 +81,7 @@ function ReadoutTile({ label, value, fallback, accent = "var(--accent)", dot = f
   );
 }
 
-// Live instrument cluster wired to real endpoints — the readout PROVES the page is real.
+// Live instrument cluster wired to real endpoints, the readout PROVES the page is real.
 function HeroReadout() {
   const stats = useLiveStats();
   return (
@@ -93,7 +93,7 @@ function HeroReadout() {
   );
 }
 
-// The measure ruler — an engineered object that IS the 6-layer pipeline, GUARD as apex.
+// The measure ruler, an engineered object that IS the 6-layer pipeline, GUARD as apex.
 const RULER = [
   { n: "01", label: "OBSERVE", c: "var(--signal)" },
   { n: "02", label: "REMEMBER", c: "var(--duplicate)" },
@@ -138,7 +138,7 @@ function HeroRuler() {
   );
 }
 
-// A vertical connector with a packet of light flowing down it — the "agentic workflow"
+// A vertical connector with a packet of light flowing down it, the "agentic workflow"
 // motion for the memory-graph pipeline. Pure CSS, reduced-motion-safe (trace-travel).
 function FlowPipe() {
   return (
@@ -169,10 +169,10 @@ const COSTS = [
 ];
 
 const STEPS = [
-  { Icon: IconObserve, t: "Observe", d: "Every message, PR and doc flows into memory — continuously." },
+  { Icon: IconObserve, t: "Observe", d: "Every message, PR and doc flows into memory, continuously." },
   { Icon: IconRemember, t: "Remember", d: "Cognee builds a temporal knowledge graph of decisions." },
   { Icon: IconReason, t: "Reason", d: "It re-reasons over the graph: what contradicts, duplicates, or has one owner." },
-  { Icon: IconShield, t: "Protect", d: "It interrupts in-thread and on the PR — cited, dated, owned." },
+  { Icon: IconShield, t: "Protect", d: "It interrupts in-thread and on the PR, cited, dated, owned." },
   { Icon: IconImprove, t: "Improve", d: "You grade each catch; precision compounds for your team." },
 ];
 
@@ -231,12 +231,12 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* 1 · Hero — engineered "datasheet": measure-ruler pipeline + live readout, no gradient-slop */}
+      {/* 1 · Hero, engineered "datasheet": measure-ruler pipeline + live readout, no gradient-slop */}
       <header className="relative overflow-hidden">
-        {/* faint blueprint grid, concentrated top-left — replaces the AI-generic radial glow */}
+        {/* faint blueprint grid, concentrated top-left, replaces the AI-generic radial glow */}
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{ backgroundImage: "linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px)", backgroundSize: "32px 32px", WebkitMaskImage: "radial-gradient(120% 80% at 12% 0%, #000 28%, transparent 72%)", maskImage: "radial-gradient(120% 80% at 12% 0%, #000 28%, transparent 72%)" }} />
         <div className="relative mx-auto max-w-6xl px-6">
-          <div className="pt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">Trace · Guardian Agent — 00,00</div>
+          <div className="pt-5 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">Trace · Guardian Agent, 00,00</div>
           <div className="grid items-start gap-10 pb-14 pt-7 lg:grid-cols-[1.15fr_.85fr] lg:pt-10">
             <div>
               <Reveal>
@@ -252,7 +252,7 @@ export default function Landing() {
               </Reveal>
               <Reveal delay={120}>
                 <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-dim">
-                  Trace reads every Slack thread, pull request and RFC into one temporal memory graph — then interrupts the moment a change reverses a past decision, duplicates shipped work, or leans on a single owner. In-thread. On the PR. Cited, dated, owned.
+                  Trace reads every Slack thread, pull request and RFC into one temporal memory graph, then interrupts the moment a change reverses a past decision, duplicates shipped work, or leans on a single owner. In-thread. On the PR. Cited, dated, owned.
                 </p>
               </Reveal>
               <Reveal delay={170}>
@@ -287,23 +287,23 @@ export default function Landing() {
       <section id="demo" className="mx-auto max-w-6xl scroll-mt-16 px-6 pt-16 pb-4">
         <Reveal className="text-center">
           <p className={eyebrow}>See it in action</p>
-          <h2 className={h2}>Watch Trace catch a decision going wrong — live</h2>
+          <h2 className={h2}>Watch Trace catch a decision going wrong, live</h2>
         </Reveal>
         <Reveal delay={120} className="mt-8">
           <VideoShowcase />
         </Reveal>
       </section>
 
-      {/* 1b · Validation CTA — waitlist + is-this-useful feedback */}
+      {/* 1b · Validation CTA, waitlist + is-this-useful feedback */}
       <section id="waitlist" className="border-y scroll-mt-16" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
         <div className="mx-auto max-w-6xl px-6 py-16 text-center">
           <p className={eyebrow}>We&apos;re validating with real teams</p>
           <h2 className="mt-2 text-balance text-2xl font-semibold tracking-tight text-ink sm:text-[30px]">
-            Give your company a memory — and a guardian.
+            Give your company a memory, and a guardian.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-dim">
             Trace remembers every decision your company makes, traces exactly where one went wrong, and
-            feeds that memory to the AI agents your team already uses. Join the private beta — or just tell
+            feeds that memory to the AI agents your team already uses. Join the private beta, or just tell
             us if the idea resonates.
           </p>
           <div className="mt-8">
@@ -351,7 +351,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 4 · Before any AI writes code — the differentiator */}
+      {/* 4 · Before any AI writes code, the differentiator */}
       <section id="before-ai" className="mx-auto max-w-5xl scroll-mt-16 px-6 py-20">
         <Reveal>
           <div className="text-center">
@@ -415,7 +415,7 @@ export default function Landing() {
         </Reveal>
       </section>
 
-      {/* 7 · One memory graph — the connected pipeline, as an animated agentic workflow */}
+      {/* 7 · One memory graph, the connected pipeline, as an animated agentic workflow */}
       <section id="guardian" className="border-y scroll-mt-16" style={{ borderColor: "var(--line)", background: "var(--surface)" }}>
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 lg:grid-cols-2">
           <Reveal>
@@ -423,7 +423,7 @@ export default function Landing() {
               <p className={eyebrow}>One memory graph</p>
               <h2 className={h2}>Everything the company knows, connected.</h2>
               <p className="mt-3 max-w-md text-[14px] leading-relaxed text-dim">
-                Every source flows into one temporal graph. The Guardian reasons over it — then every developer and AI coding agent works from the exact same memory.
+                Every source flows into one temporal graph. The Guardian reasons over it, then every developer and AI coding agent works from the exact same memory.
               </p>
 
               <div className="mt-8 flex flex-col items-center">
@@ -438,14 +438,14 @@ export default function Landing() {
 
                 <FlowPipe />
 
-                {/* Cognee — the memory substrate */}
+                {/* Cognee, the memory substrate */}
                 <div className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-semibold text-ink" style={{ background: "var(--surface)", border: "1px solid var(--line-strong)", boxShadow: "var(--shadow-sm)" }}>
                   <IconGraph className="h-5 w-5 text-accent" /> Temporal Knowledge Graph <span className="text-faint">· Cognee</span>
                 </div>
 
                 <FlowPipe />
 
-                {/* Guardian Agent — the star of the pipeline, breathing glow */}
+                {/* Guardian Agent, the star of the pipeline, breathing glow */}
                 <div className="trace-glow flex items-center gap-2.5 rounded-xl px-5 py-3 text-[14px] font-semibold text-accent-ink" style={{ background: "var(--accent-soft)", border: "1px solid color-mix(in oklab, var(--accent) 34%, transparent)" }}>
                   <span className="grid h-7 w-7 place-items-center rounded-lg" style={{ background: "var(--surface)", boxShadow: "var(--shadow-sm)" }}><TraceMark className="h-4 w-4" /></span>
                   Guardian Agent
@@ -454,7 +454,7 @@ export default function Landing() {
 
                 <FlowPipe />
 
-                {/* Developers + AI coding agents — highlighted, all on one memory */}
+                {/* Developers + AI coding agents, highlighted, all on one memory */}
                 <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-faint">Every developer &amp; AI agent, aligned</div>
                 <div className="flex flex-wrap items-center justify-center gap-2 rounded-2xl p-3" style={{ background: "color-mix(in oklab, var(--accent) 5%, var(--surface))", border: "1px solid color-mix(in oklab, var(--accent) 18%, transparent)" }}>
                   <span className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium text-dim" style={{ background: "var(--surface)", border: "1px solid var(--line)" }}><IconUsers className="h-4 w-4" />Developers</span>
@@ -466,7 +466,7 @@ export default function Landing() {
             </div>
           </Reveal>
 
-          {/* Anatomy of a catch — confidence + evidence + owner */}
+          {/* Anatomy of a catch, confidence + evidence + owner */}
           <Reveal delay={100}>
             <div>
               <p className={eyebrow}>Enterprise-grade findings</p>
@@ -479,7 +479,7 @@ export default function Landing() {
                     <span className="font-semibold tabular-nums" style={{ color: "oklch(0.5 0.13 155)" }}>98%</span>
                   </span>
                 </div>
-                <p className="mt-3 text-[14px] font-medium leading-snug text-ink">PR #482 migrates billing to MongoDB — reversing the Q1 decision to standardize on PostgreSQL.</p>
+                <p className="mt-3 text-[14px] font-medium leading-snug text-ink">PR #482 migrates billing to MongoDB, reversing the Q1 decision to standardize on PostgreSQL.</p>
                 <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[11px]">
                   <span className="text-faint">Evidence</span>
                   {["Slack", "Architecture RFC", "Meeting notes"].map((e) => (
@@ -500,7 +500,7 @@ export default function Landing() {
             <div>
               <p className={eyebrow}>API-first</p>
               <h2 className={h2}>One API. Every AI understands your company.</h2>
-              <p className="mt-3 max-w-md text-[15px] leading-relaxed text-dim">Power every agent, CI check and IDE with verified organizational memory — served live over MCP or a single HTTP call.</p>
+              <p className="mt-3 max-w-md text-[15px] leading-relaxed text-dim">Power every agent, CI check and IDE with verified organizational memory, served live over MCP or a single HTTP call.</p>
               <Link href="/app" className="btn mt-5 inline-flex"><IconApi className="h-4 w-4" /> Explore the Brain API</Link>
             </div>
           </Reveal>
@@ -537,7 +537,7 @@ export default function Landing() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-[13px] text-dim">Most tools store the latest doc. Trace keeps the whole chain — so it catches the PR that quietly reverses April&apos;s call.</p>
+            <p className="mt-4 text-[13px] text-dim">Most tools store the latest doc. Trace keeps the whole chain, so it catches the PR that quietly reverses April&apos;s call.</p>
           </Reveal>
         </div>
       </section>
@@ -622,13 +622,13 @@ export default function Landing() {
           <Reveal>
             <p className={eyebrow}>Why now</p>
             <p className="mx-auto mt-4 max-w-2xl text-[17px] leading-relaxed text-ink">
-              Engineering teams increasingly rely on AI coding assistants — and those assistants generate code with <span className="font-semibold">no organizational memory</span>. Trace becomes the memory layer between enterprise knowledge and every AI agent.
+              Engineering teams increasingly rely on AI coding assistants, and those assistants generate code with <span className="font-semibold">no organizational memory</span>. Trace becomes the memory layer between enterprise knowledge and every AI agent.
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* 15 · Final CTA — the mission */}
+      {/* 15 · Final CTA, the mission */}
       <section className="relative overflow-hidden">
         <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(50% 60% at 50% 100%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 70%)" }} />
         <div className="relative mx-auto max-w-3xl px-6 py-24 text-center">

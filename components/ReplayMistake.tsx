@@ -5,7 +5,7 @@ import { BrandLogo } from "@/components/BrandIcon";
 import { TraceMark } from "@/components/TraceMark";
 import { IconPlay, IconShield } from "@/components/Icons";
 
-// "Replay a mistake" — the unforgettable hero demo. A visitor hits Replay and
+// "Replay a mistake", the unforgettable hero demo. A visitor hits Replay and
 // watches a real drift play out on a timeline: a decision is made and remembered,
 // months later a PR reverses it, and 2 seconds later Trace comments with citations.
 // Ends on the with/without contrast. Pure client animation (no backend needed).
@@ -18,9 +18,9 @@ interface Beat {
 }
 
 const BEATS: Beat[] = [
-  { date: "Mar 12", kind: "decide", title: "Team standardizes on PostgreSQL", detail: "“All new services use Postgres — we're done running Mongo in prod.” — Priya, #architecture" },
-  { date: "Apr 2", kind: "store", title: "Decision remembered by Trace", detail: "Written to the temporal memory graph — cited, dated, owned." },
-  { date: "Jul 5", kind: "pr", title: "PR #482 — migrate billing to MongoDB", detail: "A new engineer opens a PR that reverses the standard. Nobody remembers the thread." },
+  { date: "Mar 12", kind: "decide", title: "Team standardizes on PostgreSQL", detail: "“All new services use Postgres, we're done running Mongo in prod.”, Priya, #architecture" },
+  { date: "Apr 2", kind: "store", title: "Decision remembered by Trace", detail: "Written to the temporal memory graph, cited, dated, owned." },
+  { date: "Jul 5", kind: "pr", title: "PR #482, migrate billing to MongoDB", detail: "A new engineer opens a PR that reverses the standard. Nobody remembers the thread." },
   { date: "+2s", kind: "catch", title: "Trace comments on the PR", detail: "⟲ This reverses the Q1 decision to standardize on PostgreSQL (Priya). Reconcile before merge." },
 ];
 
@@ -118,7 +118,7 @@ export default function ReplayMistake() {
           </div>
           <div className="rounded-lg p-3" style={{ border: "1px solid color-mix(in oklab, var(--accent) 30%, transparent)", background: "var(--accent-soft)" }}>
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-accent-ink"><IconShield className="h-3.5 w-3.5" /> With Trace</div>
-            <div className="mt-0.5 text-[12px] text-dim">The organization remembers — before merge.</div>
+            <div className="mt-0.5 text-[12px] text-dim">The organization remembers, before merge.</div>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 // So we cache the last good graph for GRAPH_TTL_MS and, on a Cloud stall, serve the
 // last-good LIVE graph (flagged `stale`) instead of flapping to mock.
 const GRAPH_TTL_MS = 60_000;
-// When Cloud fails, don't re-probe (and block) on every poll — back off for this long
+// When Cloud fails, don't re-probe (and block) on every poll, back off for this long
 // and serve last-good/mock INSTANTLY. Prevents the per-poll hang during an outage.
 const DOWN_TTL_MS = 20_000;
 interface GraphCache {
@@ -30,7 +30,7 @@ function serve(graph: GraphData, extra: Record<string, unknown>) {
   return NextResponse.json({ ...applyForget(graph), ...extra });
 }
 
-// Fetch a fresh graph and update the cache. Never throws — on failure it keeps the
+// Fetch a fresh graph and update the cache. Never throws, on failure it keeps the
 // last-good graph and arms a short backoff so the next poll doesn't re-block.
 async function refreshGraph(now: number): Promise<GraphData | null> {
   try {
@@ -41,7 +41,7 @@ async function refreshGraph(now: number): Promise<GraphData | null> {
       g.__traceGraphCache = { graph, at: now };
       return graph;
     }
-    // Empty (e.g. a momentary datasetId miss) — treat as a soft failure and back off
+    // Empty (e.g. a momentary datasetId miss), treat as a soft failure and back off
     // so the next polls fast-path to last-good/mock instead of re-blocking on Cloud.
     const prev = g.__traceGraphCache;
     g.__traceGraphCache = { graph: prev?.graph, at: prev?.at ?? 0, failedUntil: now + DOWN_TTL_MS };
@@ -72,7 +72,7 @@ export async function GET() {
   // Stale-while-revalidate: once we have a real graph, ALWAYS serve it instantly and
   // never block a poll on slow Cloud again. Refresh in the background when stale (and
   // Cloud isn't in a backoff window). This is what keeps the graph up during Cloud's
-  // 20-40s stalls — the UI shows the last-good live graph, never flaps to mock.
+  // 20-40s stalls, the UI shows the last-good live graph, never flaps to mock.
   if (cached?.graph) {
     const fresh = now - cached.at < GRAPH_TTL_MS;
     const backingOff = cached.failedUntil && now < cached.failedUntil;

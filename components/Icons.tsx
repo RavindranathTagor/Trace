@@ -1,5 +1,5 @@
 // Line icons (currentColor, 1.6 stroke) for the landing page + small brand marks
-// for the AI coding agents and the tech stack. No emojis anywhere — these are the
+// for the AI coding agents and the tech stack. No emojis anywhere, these are the
 // visual vocabulary of the marketing sections.
 
 type P = { className?: string; style?: React.CSSProperties };
@@ -34,7 +34,7 @@ export const IconPlay = (p: P) => (<S {...p}><path d="M7 5l12 7-12 7z" /></S>);
 export const IconUsers = (p: P) => (<S {...p}><circle cx="9" cy="8" r="3" /><path d="M3 20a6 6 0 0 1 12 0" /><path d="M16 6a3 3 0 0 1 0 6M21 20a6 6 0 0 0-4-5.6" /></S>);
 export const IconBolt = (p: P) => (<S {...p}><path d="M13 3 4 14h6l-1 7 9-11h-6z" /></S>);
 
-// ── AI coding-agent marks (monogram badges — brand-coloured, recognizable) ──────
+// ── AI coding-agent marks (monogram badges, brand-coloured, recognizable) ──────
 function Badge({ bg, fg = "#fff", label, className = "h-6 w-6", glyph }: { bg: string; fg?: string; label: string; className?: string; glyph: React.ReactNode }) {
   return (
     <svg viewBox="0 0 24 24" className={className} role="img" aria-label={label}>

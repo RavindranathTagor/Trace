@@ -14,18 +14,18 @@ interface Step {
 }
 
 const TOUR: Step[] = [
-  { title: "Hey — I'm Trace 👋", text: "Your team's memory, with a face. Drag me anywhere. Let me give you the 30-second tour of what I do." },
-  { nav: "briefing", target: '[data-tour="nav-briefing"]', title: "Your morning briefing", text: "Every day I surface the things your team forgot — cited, dated, and owned. Like this:", graphic: "briefing" },
+  { title: "Hey, I'm Trace 👋", text: "Your team's memory, with a face. Drag me anywhere. Let me give you the 30-second tour of what I do." },
+  { nav: "briefing", target: '[data-tour="nav-briefing"]', title: "Your morning briefing", text: "Every day I surface the things your team forgot, cited, dated, and owned. Like this:", graphic: "briefing" },
   { target: '[data-tour="nav-briefing"]', title: "I comment on PRs", text: "When someone opens a pull request that reverses a past decision, I flag it right on the PR:", graphic: "github" },
   { target: '[data-tour="nav-briefing"]', title: "…and reply in Discord", text: "In Discord I jump into the thread the second a decision drifts:", graphic: "discord" },
-  { target: '[data-tour="nav-briefing"]', title: "…and in Slack", text: "Same in Slack — the moment a new call reverses an earlier one, I speak up with the receipt:", graphic: "slack" },
-  { nav: "graph", target: '[data-tour="nav-graph"]', title: "The living decision graph", text: "Every decision, person and project — connected. When I answer, the exact subgraph I traversed lights up, like this:", graphic: "graphanim" },
+  { target: '[data-tour="nav-briefing"]', title: "…and in Slack", text: "Same in Slack, the moment a new call reverses an earlier one, I speak up with the receipt:", graphic: "slack" },
+  { nav: "graph", target: '[data-tour="nav-graph"]', title: "The living decision graph", text: "Every decision, person and project, connected. When I answer, the exact subgraph I traversed lights up, like this:", graphic: "graphanim" },
   { nav: "ask", target: '[data-tour="nav-ask"]', title: "Ask me anything", text: "Query your team's whole history and I answer with citations to the real messages." },
-  { nav: "talk", target: '[data-tour="nav-talk"]', title: "Or just talk to me", text: "Prefer voice? That face on the Talk tab is me — same character, speaking your answers out loud." },
+  { nav: "talk", target: '[data-tour="nav-talk"]', title: "Or just talk to me", text: "Prefer voice? That face on the Talk tab is me, same character, speaking your answers out loud." },
   { nav: "whatif", target: '[data-tour="nav-whatif"]', title: "Query the future", text: "Wondering what breaks if a key person leaves? I'll project the impact, grounded in what they own." },
-  { nav: "sources", target: '[data-tour="nav-sources"]', title: "Connect your tools", text: "Discord, GitHub, Slack, Teams — plug them in here in a few clicks. No terminal, no config files." },
-  { target: '[data-tour="header"]', title: "Cloud or local — your call", text: "Flip my memory backend right here. If one goes down, I keep working from the other." },
-  { title: "That's the tour! 🎉", text: "I'll hang out here and speak up only when something matters. Drag me wherever you like — replay this anytime from my ? button." },
+  { nav: "sources", target: '[data-tour="nav-sources"]', title: "Connect your tools", text: "Discord, GitHub, Slack, Teams, plug them in here in a few clicks. No terminal, no config files." },
+  { target: '[data-tour="header"]', title: "Cloud or local, your call", text: "Flip my memory backend right here. If one goes down, I keep working from the other." },
+  { title: "That's the tour! 🎉", text: "I'll hang out here and speak up only when something matters. Drag me wherever you like, replay this anytime from my ? button." },
 ];
 
 const GRAPHIC: Record<Graphic, () => JSX.Element> = {
@@ -62,7 +62,7 @@ export default function TraceGuide({ navigate, autoStart = false }: { navigate: 
 
   const base = () => rootRef.current?.getBoundingClientRect();
 
-  // Voice narration — Trace reads each step aloud with the browser's speech engine
+  // Voice narration, Trace reads each step aloud with the browser's speech engine
   // (no API key, works offline). While it speaks, `talking` drives the bot's mouth.
   const speak = useCallback((text: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -70,7 +70,7 @@ export default function TraceGuide({ navigate, autoStart = false }: { navigate: 
       window.speechSynthesis.cancel();
       setTalking(false);
       if (!narrateRef.current) return;
-      const clean = text.replace(/👋|🎉|⚠️|↗|🔍/g, "").replace(/[—…]/g, ",");
+      const clean = text.replace(/👋|🎉|⚠️|↗|🔍/g, "").replace(/[-…]/g, ",");
       const u = new SpeechSynthesisUtterance(clean);
       u.rate = 1.04;
       u.pitch = 1.06;

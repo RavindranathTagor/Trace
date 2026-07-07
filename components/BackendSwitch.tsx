@@ -27,7 +27,7 @@ function ServerIcon({ className }: { className?: string }) {
 }
 
 // Icon-only switch between Cognee Cloud and local Cognee. Both are kept in sync
-// (dual-write), so switching — or an auto-failover — never loses data.
+// (dual-write), so switching, or an auto-failover, never loses data.
 export default function BackendSwitch() {
   const [s, setS] = useState<Status | null>(null);
 

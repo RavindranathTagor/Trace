@@ -12,11 +12,11 @@ import {
 } from "@/data/decisions";
 import { TraceBot } from "@/components/TraceBot";
 
-// The Decision Timeline — a horizontal SWIMLANE view of a company's real decision
+// The Decision Timeline, a horizontal SWIMLANE view of a company's real decision
 // history. Each row is a topic (Pricing, Database, …); each dot is a decision at
 // its date; an amber flowing arrow is drawn wherever a later decision REVERSED an
 // earlier one. Hover a dot to preview it below; click to pin it and jump into the
-// graph. This is the one view only a temporal memory graph can produce — the proof
+// graph. This is the one view only a temporal memory graph can produce, the proof
 // that Trace reasons across time, not just similarity.
 
 const LANE_LABEL_W = 116;
@@ -88,7 +88,7 @@ export default function DecisionTimeline({ onShowInGraph }: { onShowInGraph?: (d
             Trace · Decision timeline
           </div>
           <h1 className="mt-2 text-balance text-[24px] font-semibold leading-tight text-ink sm:text-[27px]">
-            Every decision Nimbus made — and where it changed its mind
+            Every decision Nimbus made, and where it changed its mind
           </h1>
           <p className="mt-1.5 max-w-2xl text-[13px] leading-relaxed text-dim">
             Each row is a topic; each dot is a decision, placed on the month it was made. Where a later decision
@@ -199,7 +199,7 @@ export default function DecisionTimeline({ onShowInGraph }: { onShowInGraph?: (d
         </div>
       </div>
 
-      {/* detail panel — shows the hovered dot (live preview), else the pinned one */}
+      {/* detail panel, shows the hovered dot (live preview), else the pinned one */}
       <div className="mt-4">
         {active ? (
           <DetailPanel decision={active} reverses={active.reverses ? decisions.find((d) => d.id === active.reverses) : undefined} reversedBy={reversedBy.get(active.id)} pinned={selected?.id === active.id} onShowInGraph={onShowInGraph} />

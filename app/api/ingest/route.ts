@@ -6,7 +6,7 @@ import type { IngestMessage } from "@/lib/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// POST /api/ingest  — a chat-platform adapter (Discord/Teams/Slack) posts one
+// POST /api/ingest , a chat-platform adapter (Discord/Teams/Slack) posts one
 // message or an array. We buffer + debounce cognify (see lib/ingestBuffer).
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);

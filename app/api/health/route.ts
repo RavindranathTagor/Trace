@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 const bootedAt = Date.now();
 
-// GET /api/health — liveness + dependency readiness for load balancers / uptime
+// GET /api/health, liveness + dependency readiness for load balancers / uptime
 // monitors. Returns 200 when the app is up; `ready:false` (still 200) signals a
 // degraded dependency so an orchestrator can decide whether to route traffic.
 export async function GET() {

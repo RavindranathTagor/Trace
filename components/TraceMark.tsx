@@ -1,5 +1,5 @@
 // Trace logo: a decision timeline (left→right through time) that bends at the one
-// node Trace lights up — the caught drift/finding. The thread is a subtle indigo→
+// node Trace lights up, the caught drift/finding. The thread is a subtle indigo→
 // violet gradient; the lit node is amber with a soft halo. Themed via CSS vars.
 export function TraceMark({ className = "h-6 w-6" }: { className?: string }) {
   return (
@@ -12,7 +12,7 @@ export function TraceMark({ className = "h-6 w-6" }: { className?: string }) {
       </defs>
       {/* soft halo behind the lit node */}
       <circle cx="12" cy="7.4" r="5" fill="var(--signal, #f2b04a)" opacity="0.18" />
-      {/* the decision trace — a thread through time that bends at the finding */}
+      {/* the decision trace, a thread through time that bends at the finding */}
       <path
         d="M3.2 17.2 C7 17.2 8.3 7.4 12 7.4 S16.9 14.6 20.8 11.2"
         stroke="url(#trace-thread)"
@@ -22,14 +22,14 @@ export function TraceMark({ className = "h-6 w-6" }: { className?: string }) {
       {/* nodes along the trace */}
       <circle cx="3.2" cy="17.2" r="1.9" fill="var(--accent, #4f46e5)" />
       <circle cx="20.8" cy="11.2" r="1.9" fill="#8b5cf6" opacity="0.85" />
-      {/* the lit node — the decision/drift Trace surfaces */}
+      {/* the lit node, the decision/drift Trace surfaces */}
       <circle cx="12" cy="7.4" r="2.8" fill="var(--signal, #f2b04a)" />
       <circle cx="12" cy="7.4" r="2.8" fill="none" stroke="var(--surface, #fff)" strokeWidth="0.9" />
     </svg>
   );
 }
 
-// The full wordmark — larger, crisper. `size` scales the whole lockup.
+// The full wordmark, larger, crisper. `size` scales the whole lockup.
 export function TraceWordmark({ size = "md" }: { size?: "md" | "lg" }) {
   const lg = size === "lg";
   return (

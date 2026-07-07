@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 // GET /api/pulse/feedback -> the confirmation-loop scoreboard: how many findings the
 // team confirmed vs dismissed, and the precision that climbs as they grade. This is
-// the moat made measurable — the number a pull-search product can never show.
+// the moat made measurable, the number a pull-search product can never show.
 export async function GET() {
   const { confirmed, dismissed } = feedbackStats();
   const graded = confirmed + dismissed;

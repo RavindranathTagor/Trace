@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Trace — catch what your team forgot it decided",
+  title: "Trace, catch what your team forgot it decided",
   description:
     "Trace watches your team's activity and surfaces what you haven't realized: decisions that contradict past decisions, duplicate work across teams, and ownership gaps. Powered by a Cognee temporal memory graph.",
 };

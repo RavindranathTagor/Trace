@@ -1,5 +1,5 @@
 // Debounced ingestion: buffer incoming chat messages and run add+cognify in a
-// batch (never cognify per message — it's the expensive LLM step).
+// batch (never cognify per message, it's the expensive LLM step).
 //
 // Hardened against two failure modes:
 //   - Starvation: a steady stream faster than DEBOUNCE_MS would keep re-arming
@@ -15,7 +15,7 @@ const MAX_AGE_MS = 15000; // force a flush if the oldest item is older than this
 const RETRY_MS = 5000; // re-arm a flush after a failed `add` so the batch isn't stranded
 
 // globalThis-backed: /api/ingest AND /api/ingest-file both write here from
-// separate route bundles — module-level state would give each its own buffer,
+// separate route bundles, module-level state would give each its own buffer,
 // breaking the debounce and the cognify serialization guard.
 interface BufferState {
   buffer: string[];
@@ -65,7 +65,7 @@ export async function flush(): Promise<void> {
   s.cognifying = true;
   try {
     // If `add` fails (network blip), put the batch back AND re-arm a timer so it
-    // is retried automatically — otherwise, on a quiet channel with no further
+    // is retried automatically, otherwise, on a quiet channel with no further
     // enqueues, the re-queued batch would be stranded until the next message.
     try {
       await add(batch);
@@ -95,7 +95,7 @@ export async function flush(): Promise<void> {
         await cognify();
       } catch (err2) {
         // Chunks are still stored, so the NEXT successful cognify will pick them
-        // up — the data is not lost, just not yet in the graph.
+        // up, the data is not lost, just not yet in the graph.
         console.error("[ingestBuffer] cognify retry failed:", err2 instanceof Error ? err2.message : err2);
       }
     }

@@ -26,7 +26,7 @@ const safeGithubUrl = (u: unknown): string =>
 const safeAvatarUrl = (u: unknown): string | undefined =>
   typeof u === "string" && /^https:\/\/avatars\.githubusercontent\.com\//.test(u) ? u : undefined;
 
-// POST /api/github/webhook — GitHub PR events. The cross-source drift catch:
+// POST /api/github/webhook, GitHub PR events. The cross-source drift catch:
 // a PR that reverses a decision made in chat. We guard the PR against the team's
 // memory, ingest it, record a dashboard alert, and (with GITHUB_TOKEN) comment
 // on the PR in-line.
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
   // REAL GitHub deliveries: respond instantly (GitHub times out webhooks at ~10s,
   // and the guard's retrieval + LLM can take much longer), then process in the
-  // background — the dashboard polls the alert store, so the catch appears async.
+  // background, the dashboard polls the alert store, so the catch appears async.
   if (event === "pull_request") {
     void processDrift(meta);
     return NextResponse.json({ ok: true, queued: true });
@@ -124,7 +124,7 @@ async function processDrift(m: DriftMeta) {
   if (alert && token && /^https:\/\/api\.github\.com\//.test(m.commentsUrl)) {
     const cite =
       `> ${alert.prior.quote}` +
-      (alert.prior.who || alert.prior.when ? ` — ${[alert.prior.who, alert.prior.when].filter(Boolean).join(", ")}` : "");
+      (alert.prior.who || alert.prior.when ? `, ${[alert.prior.who, alert.prior.when].filter(Boolean).join(", ")}` : "");
     const comment = [`**Trace** · ${alert.headline}`, "⚠️ This PR may reverse an earlier decision:", cite, alert.why]
       .filter(Boolean)
       .join("\n\n");

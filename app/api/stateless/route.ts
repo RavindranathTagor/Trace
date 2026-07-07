@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 // POST /api/stateless { query } -> the honest "Stateless AI" baseline: a plain
 // LLM with NO memory of the team. It genuinely can't answer team-specific
-// questions — that's the side-by-side contrast with Hindsight (Cognee).
+// questions, that's the side-by-side contrast with Hindsight (Cognee).
 export async function POST(req: NextRequest) {
   const { query } = (await req.json().catch(() => ({}))) as { query?: string };
   if (!query?.trim()) return NextResponse.json({ error: "query is required" }, { status: 400 });
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   if (!llmAvailable()) {
     return NextResponse.json({
       answer:
-        "I don't have any memory of your team's meetings or decisions, so I can't answer that. (This is a plain LLM with no memory — set GROQ_API_KEY / GOOGLE_API_KEY, or run Ollama, to make the baseline live.)",
+        "I don't have any memory of your team's meetings or decisions, so I can't answer that. (This is a plain LLM with no memory, set GROQ_API_KEY / GOOGLE_API_KEY, or run Ollama, to make the baseline live.)",
       source: "stateless-canned",
     });
   }

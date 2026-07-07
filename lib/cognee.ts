@@ -36,11 +36,11 @@ const FALLBACK: Target | null =
     : null;
 
 // Circuit breaker: after PRIMARY fails, prefer FALLBACK for this long, then re-probe.
-// 60s (not 30s) so a stalled Cloud is re-probed less often — we don't want the 8s
+// 60s (not 30s) so a stalled Cloud is re-probed less often, we don't want the 8s
 // graph poll piling hung connections onto a DB that's already connection-exhausted.
 const PENALTY_MS = 60_000;
 // Shared across ALL API-route bundles: Next.js can bundle each route separately, so
-// a plain module-level `let` would NOT be shared — but the manual switch, circuit
+// a plain module-level `let` would NOT be shared, but the manual switch, circuit
 // breaker, and active-backend badge must all agree. globalThis is one instance.
 interface CogneeState {
   preference: "auto" | "cloud" | "local";
@@ -57,11 +57,11 @@ const state: CogneeState = ((globalThis as unknown as { __traceCogneeState?: Cog
   servedBase: PRIMARY.base,
   downUntil: {},
 });
-// Older globalThis instances (hot-reload) may predate downUntil — ensure it exists.
+// Older globalThis instances (hot-reload) may predate downUntil, ensure it exists.
 if (!state.downUntil) state.downUntil = {};
 
 // A target that hard-fails to connect is unreachable for this long. Distinct from
-// PENALTY_MS (PRIMARY circuit breaker) — this is about "don't bother trying it".
+// PENALTY_MS (PRIMARY circuit breaker), this is about "don't bother trying it".
 const HARD_DOWN_MS = 30_000;
 
 /** A connect-level failure meaning the target is genuinely down (not a transient
@@ -79,7 +79,7 @@ function targetDown(base: string): boolean {
 
 // The two logical backends. "auto" = cloud-primary with failover; "cloud"/"local"
 // pin a preferred order but STILL fail over, so we keep working if one is down.
-// Writes are SINGLE-WRITE with failover (see writeAll) — a write lands on the
+// Writes are SINGLE-WRITE with failover (see writeAll), a write lands on the
 // first reachable target, not replicated across both. If PRIMARY and FALLBACK
 // diverge, a failover can serve the other backend's (possibly staler) data.
 const ALL: Target[] = [PRIMARY, ...(FALLBACK ? [FALLBACK] : [])];
@@ -107,12 +107,12 @@ function targetOrder(): Target[] {
   else if (state.preference === "local" && LOCAL_T && CLOUD_T) order = [LOCAL_T, CLOUD_T];
   // auto: PRIMARY first unless it's in the penalty box
   else order = Date.now() < state.primaryDownUntil ? [ALL[1], ALL[0]] : [...ALL];
-  // Never PREFER a hard-down target — push unreachable ones to the back (stable),
+  // Never PREFER a hard-down target, push unreachable ones to the back (stable),
   // so we don't waste the first attempt on a dead localhost while Cloud is healthy.
   return order.slice().sort((a, b) => Number(targetDown(a.base)) - Number(targetDown(b.base)));
 }
 
-/** Which backend is currently serving requests — for the UI badge. */
+/** Which backend is currently serving requests, for the UI badge. */
 export function activeBackend(): "cloud" | "local" {
   const t = ALL.find((x) => x.base === state.servedBase);
   return t && t.cloud ? "cloud" : "local";
@@ -151,7 +151,7 @@ async function token(): Promise<string> {
 /** A transient network error worth ONE fresh-socket retry vs. a hard "it's down".
  *  undici reuses keep-alive sockets; when the peer (e.g. a cloud LB) closes an idle
  *  one, the next reuse throws `TypeError: fetch failed` with cause ECONNRESET/UND_ERR.
- *  A fresh connection then succeeds. But ECONNREFUSED/ENOTFOUND mean genuinely down —
+ *  A fresh connection then succeeds. But ECONNREFUSED/ENOTFOUND mean genuinely down -
  *  don't burn a retry there. Timeouts (AbortError) are also not retried here. */
 function isTransientNetError(err: unknown): boolean {
   const e = err as { name?: string; message?: string; code?: string; cause?: { code?: string; message?: string } };
@@ -175,7 +175,7 @@ function isTransientNetError(err: unknown): boolean {
  *  (a hung /search previously blocked recall for 300s). */
 /** Issue one request to a specific target, with per-target auth + a hard timeout.
  *  Retries ONCE on a transient socket error (stale keep-alive reset) with a fresh
- *  connection — this is the common "fetch failed" seen when polling a cloud LB —
+ *  connection, this is the common "fetch failed" seen when polling a cloud LB -
  *  before the caller fails over. String/empty bodies only; a FormData body can't be
  *  replayed, so multipart writes are attempted once. */
 async function callTarget(t: Target, path: string, init: RequestInit, timeoutMs: number): Promise<Response> {
@@ -200,7 +200,7 @@ async function callTarget(t: Target, path: string, init: RequestInit, timeoutMs:
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      // cache:"no-store" is REQUIRED — Next.js App Router caches GET fetches by default.
+      // cache:"no-store" is REQUIRED, Next.js App Router caches GET fetches by default.
       return await fetch(url, { ...init, headers, cache: "no-store", signal: controller.signal });
     } catch (err) {
       lastErr = err;
@@ -248,7 +248,7 @@ async function api(path: string, init: RequestInit = {}, timeoutMs = 30000, retr
       // A genuine connect failure marks the target unreachable so we stop preferring it.
       if (isHardDownError(err)) state.downUntil[t.base] = Date.now() + HARD_DOWN_MS;
       // Only trip PRIMARY's circuit breaker when there's a REACHABLE fallback to
-      // switch to. If the only fallback is down, keep PRIMARY first and retry it —
+      // switch to. If the only fallback is down, keep PRIMARY first and retry it -
       // failing over into a dead target just guarantees a mock response.
       if (t === PRIMARY && FALLBACK && !targetDown(FALLBACK.base)) state.primaryDownUntil = Date.now() + PENALTY_MS;
       // fall through to the next target
@@ -272,7 +272,7 @@ async function expectOk(res: Response, what: string): Promise<Response> {
 
 export async function cogneeHealthy(): Promise<boolean> {
   try {
-    // Hard timeout — a stalled tenant must not hang /api/health (or its callers).
+    // Hard timeout, a stalled tenant must not hang /api/health (or its callers).
     const res = await fetch(`${PRIMARY.base}/health`, { cache: "no-store", signal: AbortSignal.timeout(5000) });
     return res.ok;
   } catch {
@@ -286,7 +286,7 @@ export async function cogneeHealthy(): Promise<boolean> {
 
 /** Durable write to the ACTIVE backend, with automatic failover to the other if
  *  the preferred one is down. Single-write (no cross-backend replica) so ingest
- *  stays fast — when Cloud is up, everything goes to Cloud. A body FACTORY is
+ *  stays fast, when Cloud is up, everything goes to Cloud. A body FACTORY is
  *  required because a FormData/stream body can't be reused across a failover. */
 async function writeAll(path: string, makeInit: () => RequestInit, timeoutMs: number, what: string): Promise<void> {
   const order = targetOrder();
@@ -319,7 +319,7 @@ export async function add(texts: string[], nodeSet?: string[]): Promise<void> {
   await writeAll("/add", makeInit, 120000, "add");
 }
 
-// Dataset UUID is stable per name — resolve once so we can poll pipeline status.
+// Dataset UUID is stable per name, resolve once so we can poll pipeline status.
 let cachedDatasetId: string | null = null;
 async function resolveDatasetId(): Promise<string | null> {
   if (cachedDatasetId) return cachedDatasetId;
@@ -334,7 +334,7 @@ async function resolveDatasetId(): Promise<string | null> {
 }
 
 /** Poll GET /datasets/status?dataset=<id> until the pipeline is terminal or the
- *  deadline passes. Cheap, bounded reads — never a long-held blocking connection. */
+ *  deadline passes. Cheap, bounded reads, never a long-held blocking connection. */
 async function awaitCognify(datasetId: string | null, maxMs: number): Promise<void> {
   if (!datasetId) {
     // No id to poll → a short fixed wait so we don't immediately launch an
@@ -357,7 +357,7 @@ async function awaitCognify(datasetId: string | null, maxMs: number): Promise<vo
   }
 }
 
-/** cognify: build the knowledge graph. Runs ASYNC (run_in_background) — a BLOCKING
+/** cognify: build the knowledge graph. Runs ASYNC (run_in_background), a BLOCKING
  *  cognify pins the managed tenant's single worker, so every other call (even
  *  /health) times out for the whole extraction; async keeps it query-able (Cognee
  *  supports concurrent search during cognify). We poll dataset status so callers
@@ -369,7 +369,7 @@ export async function cognify(customPrompt?: string): Promise<void> {
     chunk_size: 1024,
     ...(customPrompt ? { custom_prompt: customPrompt } : {}),
   });
-  // Kick off — returns fast with PipelineRunInfo (may carry dataset_id).
+  // Kick off, returns fast with PipelineRunInfo (may carry dataset_id).
   const res = await expectOk(await api("/cognify", { method: "POST", body }, 30000), "cognify");
   let datasetId: string | null = null;
   try {
@@ -420,7 +420,7 @@ export async function search(
 /**
  * Compose an answer with Cognee's OWN managed LLM. Runs a GRAPH_COMPLETION search
  * with only_context=false, so Cognee both retrieves the subgraph AND writes the
- * answer — no external LLM (Groq) round-trip. `systemPrompt` steers tone/format
+ * answer, no external LLM (Groq) round-trip. `systemPrompt` steers tone/format
  * when the backend honors it; the instruction can also be folded into `query`.
  * Returns "" on empty so callers can fall back.
  */
@@ -497,7 +497,7 @@ export async function getGraph(): Promise<GraphData> {
   if (!id) return { nodes: [], edges: [] };
   // Cloud can take 20-40s to serialize a large graph while healthy-but-busy. The
   // route caches the result (stale-while-revalidate), so a generous cap here only
-  // affects the very first warm fetch — after that every poll is served instantly.
+  // affects the very first warm fetch, after that every poll is served instantly.
   const res = await api(`/datasets/${id}/graph`, { method: "GET" }, 45000);
   await expectOk(res, "getGraph");
   const raw = (await res.json()) as {
@@ -555,7 +555,7 @@ async function datasetId(): Promise<string | null> {
   // exactly the base api() will re-stamp below. Keying the read on a separate
   // "likelyBase" guess (the old bug) could miss an id already cached by name.
   if (dsCache[state.servedBase]) return dsCache[state.servedBase];
-  // callTarget adds the trailing slash for Cloud; cap generously — a busy Cloud
+  // callTarget adds the trailing slash for Cloud; cap generously, a busy Cloud
   // tenant can be slow to list datasets, and the id is cached after the first hit.
   const res = await api("/datasets", { method: "GET" }, 25000);
   if (!res.ok) return dsCache[state.servedBase] ?? null;
@@ -584,7 +584,7 @@ function toGraphNode(
 }
 
 // Classify using ONLY the label, the cognee `type`, and (for entities) the
-// EntityType category it links to — NOT the full properties blob, which carries
+// EntityType category it links to, NOT the full properties blob, which carries
 // noise like `source_task` that caused false ActionItem matches.
 function classifyNode(label?: string, cogneeType?: string, category?: string): NodeType {
   const hay = `${category ?? ""} ${cogneeType ?? ""} ${label ?? ""}`.toLowerCase();
@@ -599,7 +599,7 @@ function classifyNode(label?: string, cogneeType?: string, category?: string): N
   return "Entity";
 }
 
-/** search_result may be a string, an array, or a nested object — flatten to text. */
+/** search_result may be a string, an array, or a nested object, flatten to text. */
 function flattenSearchResult(sr: unknown): string {
   if (sr == null) return "";
   if (typeof sr === "string") return sr;

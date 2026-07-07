@@ -1,6 +1,6 @@
 // In-memory ring buffer of GitHub PR drift catches, so the dashboard can show
 // what Trace flagged on PRs (the webhook writes here; /api/github/alerts reads).
-// In-memory is fine for the demo — it resets on server restart.
+// In-memory is fine for the demo, it resets on server restart.
 
 export interface GithubAlert {
   id: string;
