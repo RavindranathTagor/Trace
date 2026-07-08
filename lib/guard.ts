@@ -14,6 +14,37 @@
 import { searchChunks, search, completeWithCognee } from "@/lib/cognee";
 import { chatComplete, llmAvailable } from "@/lib/llm";
 import { corpusEvidence } from "@/data/demoCorpus";
+import { align, isAlertKind, type Alignment } from "@/lib/contradiction";
+
+// Build a cited GuardAlert from a Contradiction-Aware Retrieval hit (zero LLM).
+function alertFromCar(a: Alignment, author?: string): GuardAlert {
+  const r = a.result;
+  const kind: GuardAlert["kind"] = r.kind === "duplicate" ? "duplicate" : "drift";
+  const headline =
+    kind === "duplicate"
+      ? `Possible duplicate work${r.a ? ` on "${r.a}"` : ""}`
+      : `This may reverse an earlier decision${r.b ? ` on "${r.b}"` : ""}`;
+  const why =
+    kind === "duplicate"
+      ? "Check the earlier work before building this again."
+      : "Reconcile with whoever set the earlier decision before proceeding.";
+  return { kind, headline, why, owner: author, prior: { quote: a.memory } };
+}
+
+// Contradiction-Aware Retrieval verdict: instant, cited, ZERO LLM.
+//   GuardAlert -> a confident drift/duplicate (interrupt).
+//   "silent"   -> a confident REAFFIRMATION (the message agrees with a standing decision);
+//                 authoritative, so we do NOT escalate to an LLM that might false-positive.
+//   null       -> CAR is not confident; fall through to the LLM judge.
+// Disable with CAR_GUARD=false.
+function carCheck(msg: string, priorMemory: string[], author?: string): GuardAlert | "silent" | null {
+  if (process.env.CAR_GUARD === "false" || priorMemory.length === 0) return null;
+  const top = align(msg, priorMemory, undefined, { minScore: 0.5 })[0];
+  if (!top) return null;
+  if (isAlertKind(top.result.kind) && top.result.score >= 0.66) return alertFromCar(top, author);
+  if (top.result.kind === "reaffirm" && top.result.score >= 0.5) return "silent";
+  return null;
+}
 
 export interface GuardAlert {
   kind: "drift" | "duplicate";
@@ -84,6 +115,13 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
   const msg = text.trim();
   if (msg.length < 12) return null;
 
+  // 0) FAST PATH, Contradiction-Aware Retrieval over the local memory snapshot. Instant,
+  // cited, zero LLM. Catches the common reversal/duplicate cases before any model call;
+  // falls through when CAR is not confident.
+  const carFast = carCheck(msg, corpusEvidence(msg), author);
+  if (carFast === "silent") return null; // confident reaffirmation, do not escalate
+  if (carFast) return carFast;
+
   // When the backend's completion LLM is slow (e.g. a local Ollama doing
   // GRAPH_COMPLETION), skip step 1 and judge directly over fast retrieval + the local
   // snapshot. Set COGNEE_SKIP_COMPLETION=true to keep the live guard snappy.
@@ -146,6 +184,13 @@ export async function checkMessage(text: string, author?: string): Promise<Guard
     if (!m.toLowerCase().includes(head) && !prior.some((p) => p.includes(m))) prior.push(m);
   }
   if (prior.length === 0) return null;
+
+  // CAR over the FULL retrieved memory (Cognee long-term chunks + local snapshot) before
+  // spending an LLM call. This is what catches a today message contradicting a decision
+  // from months ago the moment it is retrieved, with no model cost.
+  const carFull = carCheck(msg, prior, author);
+  if (carFull === "silent") return null;
+  if (carFull) return carFull;
 
   const evidence = prior.map((t, i) => `[${i + 1}] ${t}`).join("\n");
   const content = await chatComplete(
